@@ -17,7 +17,7 @@ setwd("/Users/hputnam/MyProjects/Geoduck_Epi/project-geoduck-oa/RAnalysis/Data/"
 #------------------------------------------------
 #SEAWATER CHEMISTRY ANALYSIS FOR DISCRETE MEASUREMENTS
 #Seawater chemistry table from simultaneous TA, pH, temperature and salinity measurements
-SW.chem <- read.csv("SWChem.csv", header=TRUE, sep=",", na.strings="NA") #load data with a header, separated by commas, with NA as NA
+SW.chem <- read.csv("test_SW_Chem.csv", header=TRUE, sep=",", na.strings="NA") #load data with a header, separated by commas, with NA as NA
 
 #Calculate CO2 parameters using seacarb
 carb.output <- carb(flag=8, var1=SW.chem$pH.Total, var2=SW.chem$TA/1000000, S= SW.chem$Salinity, T=SW.chem$Temperature, P=0, Pt=0, Sit=0, pHscale="T", kf="pf", k1k2="l", ks="d") #calculate seawater chemistry parameters using seacarb
@@ -29,4 +29,4 @@ carb.output$DIC <- carb.output$DIC*1000000 #convert to µmol kg-1
 
 carb.output 
 
-write.table(carb.output, file="/Users/hputnam/MyProjects/Geoduck_Epi/project-geoduck-oa/RAnalysis/Output/Seawater_Chemistry_Output.csv", sep=",", row.names = FALSE)
+write.table(carb.output, file="/Users/hputnam/MyProjects/Geoduck_Epi/project-geoduck-oa/RAnalysis/Output/Test_Seawater_Chemistry_Output.csv", sep=",", row.names = FALSE)

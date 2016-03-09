@@ -16,9 +16,11 @@ setwd("/Users/hputnam/MyProjects/Geoduck_Epi/project-geoduck-oa/RAnalysis/Data/"
 #Required Data files
 #pH_Calibration_Files/
 #SW_Chem.csv
+#Cell_Counts.csv
 
 #SEAWATER CHEMISTRY ANALYSIS FOR DISCRETE MEASUREMENTS
 
+##### pH Tris Calibration Curves #####
 #For conversion equations for pH from mV to total scale using tris standard
 
 path <-("/Users/hputnam/MyProjects/Geoduck_Epi/project-geoduck-oa/RAnalysis/Data/pH_Calibration_Files/")
@@ -42,7 +44,7 @@ colnames(pH.cals) <- c("Calib.Date",  "Intercept",  "Slope", "R2")
 pH.cals
 
 # read in total alkalinity, temperature, and salinity
-SW.chem <- read.csv("SW_Chem.csv", header=TRUE, sep=",", na.strings="NA") #load data with a header, separated by commas, with NA as NA
+SW.chem <- read.csv("SW_Chem_Exp.csv", header=TRUE, sep=",", na.strings="NA") #load data with a header, separated by commas, with NA as NA
 
 #merge with Seawater chemistry file
 SW.chem <- merge(pH.cals, SW.chem, by="Calib.Date")
@@ -55,6 +57,8 @@ mvTris <- SW.chem$Temperature*SW.chem$Slope+SW.chem$Intercept #calculate the mV 
 STris<-27.5 #salinity of the Tris
 phTris<- (11911.08-18.2499*STris-0.039336*STris^2)*(1/(SW.chem$Temperature+273.15))-366.27059+ 0.53993607*STris+0.00016329*STris^2+(64.52243-0.084041*STris)*log(SW.chem$Temperature+273.15)-0.11149858*(SW.chem$Temperature+273.15) #calculate the pH of the tris (Dickson A. G., Sabine C. L. and Christian J. R., SOP 6a)
 SW.chem$pH.Total<-phTris+(mvTris/1000-SW.chem$pH.MV/1000)/(R*(SW.chem$Temperature+273.15)*log(10)/F) #calculate the pH on the total scale (Dickson A. G., Sabine C. L. and Christian J. R., SOP 6a)
+
+##### Seacarb Calculations #####
 
 #Calculate CO2 parameters using seacarb
 carb.output <- carb(flag=8, var1=SW.chem$pH.Total, var2=SW.chem$TA/1000000, S= SW.chem$Salinity, T=SW.chem$Temperature, P=0, Pt=0, Sit=0, pHscale="T", kf="pf", k1k2="l", ks="d") #calculate seawater chemistry parameters using seacarb
@@ -69,6 +73,7 @@ carb.output <- cbind(SW.chem$Measure.Date,  SW.chem$Tank,  SW.chem$Treatment, ca
 colnames(carb.output) <- c("Date",  "Tank",  "Treatment",	"flag",	"Salinity",	"Temperature",	"Pressure",	"pH",	"CO2",	"pCO2",	"fCO2",	"HCO3",	"CO3",	"DIC", "TA",	"Aragonite.Sat", 	"Calcite.Sat") #Rename columns to describe contents
 carb.output <- subset(carb.output, select= c("Date",  "Tank",  "Treatment",	"Salinity",	"Temperature",		"pH",	"CO2",	"pCO2",	"HCO3",	"CO3",	"DIC", "TA",	"Aragonite.Sat"))
 
+##### Descriptive Statistics #####
 #Tanks
 mean_pCO2=tapply(carb.output$pCO2, carb.output$Tank, mean)
 se_pCO2=tapply(carb.output$pCO2, carb.output$Tank, std.error)
@@ -103,20 +108,33 @@ row.names(mean.carb.output) <- c("mean pCO2", "SE pCO2", "mean pH", "SE pH", "me
 mean.carb.output$Variables <- row.names(mean.carb.output)
 write.table (mean.carb.output, file="/Users/hputnam/MyProjects/Geoduck_Epi/project-geoduck-oa/RAnalysis/Output/Seawater_chemistry_table_Output.csv", sep=",", row.names = FALSE)
 
-#Plot Tank and Treatment mean ± se
+##### Cell Counts #####
 
-pdf("/Users/hputnam/MyProjects/Geoduck_Epi/project-geoduck-oa/RAnalysis/Output/running_carbonate_chemistry.pdf")
-par(cex.axis=0.8, cex.lab=0.8, mar=c(5, 5, 4, 2),mgp=c(3.7, 0.8, 0),las=1, mfrow=c(4,3))
+cell.counts <- read.csv("Cell_Counts.csv", header=TRUE, sep=",", na.strings="NA") #load data with a header, separated by commas, with NA as NA
+cell.counts$Avg.Cells <- rowMeans(cell.counts[,c("Count1",  "Count2",	"Count3",	"Count4")], na.rm = TRUE) #calculate average of counts
+cell.counts$cells.ml <- cell.counts$Avg.Cells/cell.counts$Volume.Counted #calculate density
 
 #Tanks
-plot(c(1,6),c(0,2200),type="n",ylab=expression(paste("pCO"["2"])), xlab=expression(paste("Tank")))
+mean_cells=tapply(cell.counts$cells.ml, cell.counts$Tank, mean)
+se_cells=tapply(cell.counts$cells.ml, cell.counts$Tank, std.error)
+
+#Treatments
+gmean_cells <- tapply(cell.counts$cells.ml, cell.counts$Treatment, mean)
+gse_cells <- tapply(cell.counts$cells.ml, cell.counts$Treatment, std.error)
+
+##### Plot Tank and Treatment mean ± se #####
+pdf("/Users/hputnam/MyProjects/Geoduck_Epi/project-geoduck-oa/RAnalysis/Output/running_carbonate_chemistry_tanks.pdf")
+par(cex.axis=0.8, cex.lab=0.8, mar=c(5, 5, 4, 2),mgp=c(3.7, 0.8, 0),las=1, mfrow=c(3,3))
+
+#Tanks
+plot(c(1,6),c(0,2400),type="n",ylab=expression(paste("pCO"["2"])), xlab=expression(paste("Tank")))
 plotCI(x=c(1,2,3,4,5,6), y=mean_pCO2,uiw=se_pCO2, liw=se_pCO2,add=TRUE,gap=0.001)
-abline(h=540, lty=2)
-abline(h=1500, lty=2)
+abline(h=580, lty=2)
+abline(h=2100, lty=2)
 
 plot(c(1,6),c(6,9),type="n",ylab=expression(paste("pH")), xlab=expression(paste("Tank")))
 plotCI(x=c(1,2,3,4,5,6), y=mean_pH,uiw=se_pH, liw=se_pH,add=TRUE,gap=0.001)
-abline(h=7.50, lty=2)
+abline(h=7.37, lty=2)
 abline(h=7.90, lty=2)
 
 plot(c(1,6),c(12,15),type="n",ylab=expression(paste("Temperature °C")), xlab=expression(paste("Tank")))
@@ -126,54 +144,55 @@ abline(h=14, lty=2)
 
 plot(c(1,6),c(25,29),type="n",ylab=expression(paste("Salinity")), xlab=expression(paste("Tank")))
 plotCI(x=c(1,2,3,4,5,6), y=mean_Sal,uiw=se_Sal, liw=se_Sal,add=TRUE,gap=0.001)
-abline(h=27, lty=2)
-abline(h=27, lty=2)
+abline(h=27.5, lty=2)
+abline(h=27.5, lty=2)
 
-plot(c(1,6),c(1800,2200),type="n",ylab=expression(paste("TA µmol kg-1")), xlab=expression(paste("Tank")))
+plot(c(1,6),c(1800,2200),type="n",ylab=expression(paste("Total Alkalinity µmol kg"^"-1")), xlab=expression(paste("Tank")))
 plotCI(x=c(1,2,3,4,5,6), y=mean_TA,uiw=se_TA, liw=se_TA,add=TRUE,gap=0.001)
 abline(h=2085, lty=2)
 abline(h=2085, lty=2)
 
-plot(c(1,6),c(1800,2200),type="n",ylab=expression(paste("DIC µmol kg-1")), xlab=expression(paste("Tank")))
+plot(c(1,6),c(1800,2200),type="n",ylab=expression(paste("DIC µmol kg"^"-1")), xlab=expression(paste("Tank")))
 plotCI(x=c(1,2,3,4,5,6), y=mean_DIC,uiw=se_DIC, liw=se_DIC,add=TRUE,gap=0.001)
-abline(h=1990, lty=2)
-abline(h=2100, lty=2)
+abline(h=1980, lty=2)
+abline(h=2130, lty=2)
+
+plot(c(1,6),c(50000,200000),type="n", ylab=expression(paste("Algal Feed (Cells ml"^"-1",")")), xlab=expression(paste("Tank")))
+plotCI(x=c(1,2,3,4,5,6), y=mean_cells,uiw=se_cells, liw=se_cells,add=TRUE,gap=0.001)
+
+dev.off()
+
+
+pdf("/Users/hputnam/MyProjects/Geoduck_Epi/project-geoduck-oa/RAnalysis/Output/running_carbonate_chemistry_treatments.pdf")
+par(cex.axis=0.8, cex.lab=0.8, mar=c(5, 5, 4, 2),mgp=c(3.7, 0.8, 0),las=1, mfrow=c(3,3))
 
 #Treatments
-plot(c(1,2),c(0,2200), xaxt = "n", type="n",ylab=expression(paste("pCO"["2"])), xlab=expression(paste("Treatment")))
+plot(c(1,2),c(0,2400), xaxt = "n", type="n",ylab=expression(paste("pCO"["2"])), xlab=expression(paste("Treatment")))
 axis(1, at=1:2, labels=c("Ambient", "High"))
 plotCI(x=c(1,2), y=gmean_pCO2,uiw=gse_pCO2, liw=gse_pCO2,add=TRUE,gap=0.001)
-abline(h=540, lty=2)
-abline(h=1500, lty=2)
 
 plot(c(1,2),c(6,9), xaxt = "n", type="n",ylab=expression(paste("pH")), xlab=expression(paste("Treatment")))
 axis(1, at=1:2, labels=c("Ambient", "High"))
 plotCI(x=c(1,2), y=gmean_pH,uiw=gse_pH, liw=gse_pH,add=TRUE,gap=0.001)
-abline(h=7.50, lty=2)
-abline(h=7.90, lty=2)
 
 plot(c(1,2),c(12,15), xaxt = "n", type="n",ylab=expression(paste("Temperature °C")), xlab=expression(paste("Treatment")))
 axis(1, at=1:2, labels=c("Ambient", "High"))
 plotCI(x=c(1,2), y=gmean_Temp,uiw=gse_Temp, liw=gse_Temp,add=TRUE,gap=0.001)
-abline(h=14, lty=2)
-abline(h=14, lty=2)
 
 plot(c(1,2),c(25,29), xaxt = "n", type="n",ylab=expression(paste("Salinity")), xlab=expression(paste("Treatment")))
 axis(1, at=1:2, labels=c("Ambient", "High"))
 plotCI(x=c(1,2), y=gmean_Sal,uiw=gse_Sal, liw=gse_Sal,add=TRUE,gap=0.001)
-abline(h=27, lty=2)
-abline(h=27, lty=2)
 
-plot(c(1,2),c(1800,2200), xaxt = "n", type="n",ylab=expression(paste("TA µmol kg-1")), xlab=expression(paste("Treatment")))
+plot(c(1,2),c(1800,2200), xaxt = "n", type="n",ylab=expression(paste("Total Alkalinity µmol kg"^"-1")), xlab=expression(paste("Treatment")))
 axis(1, at=1:2, labels=c("Ambient", "High"))
 plotCI(x=c(1,2), y=gmean_TA,uiw=gse_TA, liw=gse_TA,add=TRUE,gap=0.001)
-abline(h=2085, lty=2)
-abline(h=2085, lty=2)
 
-plot(c(1,2),c(1800,2200), xaxt = "n", type="n",ylab=expression(paste("DIC µmol kg-1")), xlab=expression(paste("Treatment")))
+plot(c(1,2),c(1800,2200), xaxt = "n", type="n",ylab=expression(paste("DIC µmol kg"^"-1")), xlab=expression(paste("Treatment")))
 axis(1, at=1:2, labels=c("Ambient", "High"))
 plotCI(x=c(1,2), y=gmean_DIC,uiw=gse_DIC, liw=gse_DIC,add=TRUE,gap=0.001)
-abline(h=1985, lty=2)
-abline(h=2085, lty=2)
+
+plot(c(1,2),c(50000,200000), xaxt = "n", type="n", ylab=expression(paste("Algal Feed (Cells ml"^"-1",")")), xlab=expression(paste("Treatment")))
+axis(1, at=1:2, labels=c("Ambient", "High"))
+plotCI(x=c(1,2), y=gmean_cells,uiw=gse_cells, liw=gse_cells,add=TRUE,gap=0.001)
 
 dev.off()
