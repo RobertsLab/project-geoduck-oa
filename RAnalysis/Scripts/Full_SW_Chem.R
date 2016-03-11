@@ -115,12 +115,36 @@ cell.counts$Avg.Cells <- rowMeans(cell.counts[,c("Count1",  "Count2",	"Count3",	
 cell.counts$cells.ml <- cell.counts$Avg.Cells/cell.counts$Volume.Counted #calculate density
 
 #Tanks
-mean_cells=tapply(cell.counts$cells.ml, cell.counts$Tank, mean)
-se_cells=tapply(cell.counts$cells.ml, cell.counts$Tank, std.error)
+mean_cells=tapply(cell.counts$cells.ml, cell.counts$Tank, mean, na.rm = TRUE)
+se_cells=tapply(cell.counts$cells.ml, cell.counts$Tank, std.error, na.rm = TRUE)
 
 #Treatments
-gmean_cells <- tapply(cell.counts$cells.ml, cell.counts$Treatment, mean)
-gse_cells <- tapply(cell.counts$cells.ml, cell.counts$Treatment, std.error)
+gmean_cells <- tapply(cell.counts$cells.ml, cell.counts$Treatment, mean, na.rm = TRUE)
+gse_cells <- tapply(cell.counts$cells.ml, cell.counts$Treatment, std.error, na.rm = TRUE)
+
+##### Larval Counts #####
+
+larval.counts <- read.csv("Larval_Counts.csv", header=TRUE, sep=",", na.strings="NA") #load data with a header, separated by commas, with NA as NA
+larval.counts$Avg.Live <- rowMeans(larval.counts[,c("Live1",  "Live2",  "Live3",	"Live4", "Live5")], na.rm = TRUE) #calculate average of counts
+larval.counts$Avg.Dead <- rowMeans(larval.counts[,c("Dead1",  "Dead2",  "Dead3",  "Dead4", "Dead5")], na.rm = TRUE) #calculate average of counts
+larval.counts$Live.cells.ml <- larval.counts$Avg.Live/larval.counts$Volume.Counted.ml #calculate density
+larval.counts$total.larvae <- larval.counts$Live.cells.ml*larval.counts$Vol.Tripour
+lar.tot <- aggregate(total.larvae ~ Day, data=larval.counts, sum)
+#Account for the removal of the samples
+#Day2 <- 20000
+#Day4 <- 40000
+#larval.counts$lar.rel <- 1150761.6 - Day2
+
+#Tanks
+mean_larvae=tapply(larval.counts$total.larvae, list(larval.counts$Day, larval.counts$Tank), mean, na.rm = TRUE)
+se_larvae=tapply(larval.counts$total.larvae, list(larval.counts$Day, larval.counts$Tank), std.error, na.rm = TRUE)
+
+#Treatments
+gmean_larvae <- tapply(larval.counts$total.larvae, list(larval.counts$Day, larval.counts$Treatment), mean, na.rm = TRUE)
+gmean_larvae_samp <- tapply(larval.counts$total.larvae, list(larval.counts$Day, larval.counts$Treatment), mean, na.rm = TRUE)
+gse_larvae <- tapply(larval.counts$total.larvae, list(larval.counts$Day, larval.counts$Treatment), std.error, na.rm = TRUE)
+gmean_larvae <- as.data.frame(gmean_larvae)
+
 
 ##### Plot Tank and Treatment mean ± se #####
 pdf("/Users/hputnam/MyProjects/Geoduck_Epi/project-geoduck-oa/RAnalysis/Output/running_carbonate_chemistry_tanks.pdf")
@@ -129,36 +153,27 @@ par(cex.axis=0.8, cex.lab=0.8, mar=c(5, 5, 4, 2),mgp=c(3.7, 0.8, 0),las=1, mfrow
 #Tanks
 plot(c(1,6),c(0,2400),type="n",ylab=expression(paste("pCO"["2"])), xlab=expression(paste("Tank")))
 plotCI(x=c(1,2,3,4,5,6), y=mean_pCO2,uiw=se_pCO2, liw=se_pCO2,add=TRUE,gap=0.001)
-abline(h=580, lty=2)
-abline(h=2100, lty=2)
 
 plot(c(1,6),c(6,9),type="n",ylab=expression(paste("pH")), xlab=expression(paste("Tank")))
 plotCI(x=c(1,2,3,4,5,6), y=mean_pH,uiw=se_pH, liw=se_pH,add=TRUE,gap=0.001)
-abline(h=7.37, lty=2)
-abline(h=7.90, lty=2)
 
 plot(c(1,6),c(12,15),type="n",ylab=expression(paste("Temperature °C")), xlab=expression(paste("Tank")))
 plotCI(x=c(1,2,3,4,5,6), y=mean_Temp,uiw=se_Temp, liw=se_Temp,add=TRUE,gap=0.001)
-abline(h=14, lty=2)
-abline(h=14, lty=2)
 
 plot(c(1,6),c(25,29),type="n",ylab=expression(paste("Salinity")), xlab=expression(paste("Tank")))
 plotCI(x=c(1,2,3,4,5,6), y=mean_Sal,uiw=se_Sal, liw=se_Sal,add=TRUE,gap=0.001)
-abline(h=27.5, lty=2)
-abline(h=27.5, lty=2)
 
 plot(c(1,6),c(1800,2200),type="n",ylab=expression(paste("Total Alkalinity µmol kg"^"-1")), xlab=expression(paste("Tank")))
 plotCI(x=c(1,2,3,4,5,6), y=mean_TA,uiw=se_TA, liw=se_TA,add=TRUE,gap=0.001)
-abline(h=2085, lty=2)
-abline(h=2085, lty=2)
 
 plot(c(1,6),c(1800,2200),type="n",ylab=expression(paste("DIC µmol kg"^"-1")), xlab=expression(paste("Tank")))
 plotCI(x=c(1,2,3,4,5,6), y=mean_DIC,uiw=se_DIC, liw=se_DIC,add=TRUE,gap=0.001)
-abline(h=1980, lty=2)
-abline(h=2130, lty=2)
 
 plot(c(1,6),c(50000,200000),type="n", ylab=expression(paste("Algal Feed (Cells ml"^"-1",")")), xlab=expression(paste("Tank")))
 plotCI(x=c(1,2,3,4,5,6), y=mean_cells,uiw=se_cells, liw=se_cells,add=TRUE,gap=0.001)
+
+plot(c(1,6),c(0,5000),type="n", ylab=expression(paste("Larvae")), xlab=expression(paste("Tank")))
+plotCI(x=c(1,2,3,4,5,6), y=mean_larvae,uiw=se_larvae, liw=se_larvae,add=TRUE,gap=0.001)
 
 dev.off()
 
@@ -169,30 +184,36 @@ par(cex.axis=0.8, cex.lab=0.8, mar=c(5, 5, 4, 2),mgp=c(3.7, 0.8, 0),las=1, mfrow
 #Treatments
 plot(c(1,2),c(0,2400), xaxt = "n", type="n",ylab=expression(paste("pCO"["2"])), xlab=expression(paste("Treatment")))
 axis(1, at=1:2, labels=c("Ambient", "High"))
-plotCI(x=c(1,2), y=gmean_pCO2,uiw=gse_pCO2, liw=gse_pCO2,add=TRUE,gap=0.001)
+plotCI(x=c(1,2), y=gmean_pCO2,uiw=gse_pCO2, liw=gse_pCO2,add=TRUE,gap=0.001, pch=20, col=c("blue", "red"))
 
-plot(c(1,2),c(6,9), xaxt = "n", type="n",ylab=expression(paste("pH")), xlab=expression(paste("Treatment")))
+plot(c(1,2),c(7,8.5), xaxt = "n", type="n",ylab=expression(paste("pH")), xlab=expression(paste("Treatment")))
 axis(1, at=1:2, labels=c("Ambient", "High"))
-plotCI(x=c(1,2), y=gmean_pH,uiw=gse_pH, liw=gse_pH,add=TRUE,gap=0.001)
+plotCI(x=c(1,2), y=gmean_pH,uiw=gse_pH, liw=gse_pH,add=TRUE,gap=0.001, pch=20, col=c("blue", "red"))
 
-plot(c(1,2),c(12,15), xaxt = "n", type="n",ylab=expression(paste("Temperature °C")), xlab=expression(paste("Treatment")))
+plot(c(1,2),c(13,15), xaxt = "n", type="n",ylab=expression(paste("Temperature °C")), xlab=expression(paste("Treatment")))
 axis(1, at=1:2, labels=c("Ambient", "High"))
-plotCI(x=c(1,2), y=gmean_Temp,uiw=gse_Temp, liw=gse_Temp,add=TRUE,gap=0.001)
+plotCI(x=c(1,2), y=gmean_Temp,uiw=gse_Temp, liw=gse_Temp,add=TRUE,gap=0.001, pch=20, col=c("blue", "red"))
 
 plot(c(1,2),c(25,29), xaxt = "n", type="n",ylab=expression(paste("Salinity")), xlab=expression(paste("Treatment")))
 axis(1, at=1:2, labels=c("Ambient", "High"))
-plotCI(x=c(1,2), y=gmean_Sal,uiw=gse_Sal, liw=gse_Sal,add=TRUE,gap=0.001)
+plotCI(x=c(1,2), y=gmean_Sal,uiw=gse_Sal, liw=gse_Sal,add=TRUE,gap=0.001, pch=20, col=c("blue", "red"))
 
 plot(c(1,2),c(1800,2200), xaxt = "n", type="n",ylab=expression(paste("Total Alkalinity µmol kg"^"-1")), xlab=expression(paste("Treatment")))
 axis(1, at=1:2, labels=c("Ambient", "High"))
-plotCI(x=c(1,2), y=gmean_TA,uiw=gse_TA, liw=gse_TA,add=TRUE,gap=0.001)
+plotCI(x=c(1,2), y=gmean_TA,uiw=gse_TA, liw=gse_TA,add=TRUE,gap=0.001, pch=20, col=c("blue", "red"))
 
 plot(c(1,2),c(1800,2200), xaxt = "n", type="n",ylab=expression(paste("DIC µmol kg"^"-1")), xlab=expression(paste("Treatment")))
 axis(1, at=1:2, labels=c("Ambient", "High"))
-plotCI(x=c(1,2), y=gmean_DIC,uiw=gse_DIC, liw=gse_DIC,add=TRUE,gap=0.001)
+plotCI(x=c(1,2), y=gmean_DIC,uiw=gse_DIC, liw=gse_DIC,add=TRUE,gap=0.001, pch=20, col=c("blue", "red"))
 
 plot(c(1,2),c(50000,200000), xaxt = "n", type="n", ylab=expression(paste("Algal Feed (Cells ml"^"-1",")")), xlab=expression(paste("Treatment")))
 axis(1, at=1:2, labels=c("Ambient", "High"))
-plotCI(x=c(1,2), y=gmean_cells,uiw=gse_cells, liw=gse_cells,add=TRUE,gap=0.001)
+plotCI(x=c(1,2), y=gmean_cells,uiw=gse_cells, liw=gse_cells,add=TRUE,gap=0.001, pch=20, col=c("blue", "red"))
+
+plot(gmean_larvae$Ambient, type = "o", xaxt = "n", ylim = c(900000, max(gmean_larvae$Ambient, gmean_larvae$High)), ylab=expression(paste("Number of Larvae")), xlab=expression(paste("Treatment")), col = "blue")  ## index plot with one variable
+lines(gmean_larvae$High, type = "o", lty = 2, col = "red")  ## add another variable
+axis(1, at=1:2, labels=c("Day0", "Day2"))
+plotCI(x=c(1,2), y=gmean_larvae, uiw=gse_larvae, liw=gse_larvae, add=TRUE, gap=0.001)
+legend("bottomleft", c("Ambient","High"), lwd=c(2,2), col=c("blue","red"), bty="n", cex=0.6) 
 
 dev.off()
