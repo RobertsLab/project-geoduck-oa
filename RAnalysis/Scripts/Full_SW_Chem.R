@@ -130,6 +130,8 @@ larval.counts$Avg.Dead <- rowMeans(larval.counts[,c("Dead1",  "Dead2",  "Dead3",
 larval.counts$Live.cells.ml <- larval.counts$Avg.Live/larval.counts$Volume.Counted.ml #calculate density
 larval.counts$total.larvae <- larval.counts$Live.cells.ml*larval.counts$Vol.Tripour
 lar.tot <- aggregate(total.larvae ~ Day, data=larval.counts, sum)
+tank.lar.tot <- aggregate(total.larvae ~ Day + Tank, data=larval.counts, sum)
+
 #Account for the removal of the samples
 #Day2 <- 20000
 #Day4 <- 40000
@@ -172,8 +174,9 @@ plotCI(x=c(1,2,3,4,5,6), y=mean_DIC,uiw=se_DIC, liw=se_DIC,add=TRUE,gap=0.001)
 plot(c(1,6),c(50000,200000),type="n", ylab=expression(paste("Algal Feed (Cells ml"^"-1",")")), xlab=expression(paste("Tank")))
 plotCI(x=c(1,2,3,4,5,6), y=mean_cells,uiw=se_cells, liw=se_cells,add=TRUE,gap=0.001)
 
-plot(c(1,6),c(0,5000),type="n", ylab=expression(paste("Larvae")), xlab=expression(paste("Tank")))
-plotCI(x=c(1,2,3,4,5,6), y=mean_larvae,uiw=se_larvae, liw=se_larvae,add=TRUE,gap=0.001)
+plot(tank.lar.tot$total.larvae ~ tank.lar.tot$Day*tank.lar.tot$Tank, ylab=expression(paste("Number of Larvae")), xlab=expression(paste("Tank")))
+
+
 
 dev.off()
 
