@@ -17,6 +17,7 @@ setwd("/Users/hputnam/MyProjects/Geoduck_Epi/project-geoduck-oa/RAnalysis/Data/"
 #pH_Calibration_Files/
 #SW_Chem.csv
 #Cell_Counts.csv
+#Larval_Counts.csv
 
 #SEAWATER CHEMISTRY ANALYSIS FOR DISCRETE MEASUREMENTS
 
@@ -128,23 +129,27 @@ larval.counts <- read.csv("Larval_Counts.csv", header=TRUE, sep=",", na.strings=
 larval.counts$Avg.Live <- rowMeans(larval.counts[,c("Live1",  "Live2",  "Live3",	"Live4", "Live5")], na.rm = TRUE) #calculate average of counts
 larval.counts$Avg.Dead <- rowMeans(larval.counts[,c("Dead1",  "Dead2",  "Dead3",  "Dead4", "Dead5")], na.rm = TRUE) #calculate average of counts
 larval.counts$Live.cells.ml <- larval.counts$Avg.Live/larval.counts$Volume.Counted.ml #calculate density
-larval.counts$total.larvae <- larval.counts$Live.cells.ml*larval.counts$Vol.Tripour
-lar.tot <- aggregate(total.larvae ~ Day, data=larval.counts, sum)
-tank.lar.tot <- aggregate(total.larvae ~ Day + Tank, data=larval.counts, sum)
+larval.counts$Dead.cells.ml <- larval.counts$Avg.Dead/larval.counts$Volume.Counted.ml #calculate density
+larval.counts$total.live.larvae <- larval.counts$Live.cells.ml*larval.counts$Vol.Tripour
+larval.counts$total.dead.larvae <- larval.counts$Dead.cells.ml*larval.counts$Vol.Tripour
+larval.counts$per.mort <- ((larval.counts$total.dead.larvae/(larval.counts$total.live.larvae+larval.counts$total.dead.larvae))*100)
+lar.tot <- aggregate(total.live.larvae ~ Day, data=larval.counts, sum)
+tank.lar.tot <- aggregate(total.live.larvae ~ Day + Tank, data=larval.counts, sum)
+mortality <- aggregate(per.mort ~ Day + Tank, data=larval.counts, mean) 
+#Need to edit to remove hard coding 
+mortality$Combo <- c("Day 0 High","Day 2 High", "Day 4 High", "Day 0 Ambient", "Day 2 Ambient", "Day 4 Ambient", "Day 0 Ambient", "Day 2 Ambient", "Day 4 Ambient","Day 0 High", "Day 2 High", "Day 4 High","Day 0 High", "Day 2 High", "Day 4 High","Day 0 Ambient", "Day 2 Ambient", "Day 4 Ambient")
+mortality$Treatment <- c("High","High", "High", "Ambient", "Ambient", "Ambient", "Ambient", "Ambient", "Ambient","High", "High", "High","High", "High", "High","Ambient", "Ambient", "Ambient")
 
-#Account for the removal of the samples
-#Day2 <- 20000
-#Day4 <- 40000
-#larval.counts$lar.rel <- 1150761.6 - Day2
+
 
 #Tanks
-mean_larvae=tapply(larval.counts$total.larvae, list(larval.counts$Day, larval.counts$Tank), mean, na.rm = TRUE)
-se_larvae=tapply(larval.counts$total.larvae, list(larval.counts$Day, larval.counts$Tank), std.error, na.rm = TRUE)
+mean_larvae=tapply(larval.counts$total.live.larvae , list(larval.counts$Day, larval.counts$Tank), mean, na.rm = TRUE)
+se_larvae=tapply(larval.counts$total.live.larvae , list(larval.counts$Day, larval.counts$Tank), std.error, na.rm = TRUE)
 
 #Treatments
-gmean_larvae <- tapply(larval.counts$total.larvae, list(larval.counts$Day, larval.counts$Treatment), mean, na.rm = TRUE)
-gmean_larvae_samp <- tapply(larval.counts$total.larvae, list(larval.counts$Day, larval.counts$Treatment), mean, na.rm = TRUE)
-gse_larvae <- tapply(larval.counts$total.larvae, list(larval.counts$Day, larval.counts$Treatment), std.error, na.rm = TRUE)
+gmean_larvae <- tapply(larval.counts$total.live.larvae , list(larval.counts$Day, larval.counts$Treatment), mean, na.rm = TRUE)
+gmean_larvae_samp <- tapply(larval.counts$total.live.larvae , list(larval.counts$Day, larval.counts$Treatment), mean, na.rm = TRUE)
+gse_larvae <- tapply(larval.counts$total.live.larvae , list(larval.counts$Day, larval.counts$Treatment), std.error, na.rm = TRUE)
 gmean_larvae <- as.data.frame(gmean_larvae)
 
 
@@ -174,9 +179,7 @@ plotCI(x=c(1,2,3,4,5,6), y=mean_DIC,uiw=se_DIC, liw=se_DIC,add=TRUE,gap=0.001)
 plot(c(1,6),c(50000,200000),type="n", ylab=expression(paste("Algal Feed (Cells ml"^"-1",")")), xlab=expression(paste("Tank")))
 plotCI(x=c(1,2,3,4,5,6), y=mean_cells,uiw=se_cells, liw=se_cells,add=TRUE,gap=0.001)
 
-plot(tank.lar.tot$total.larvae ~ tank.lar.tot$Day*tank.lar.tot$Tank, ylab=expression(paste("Number of Larvae")), xlab=expression(paste("Tank")))
-
-
+plot(tank.lar.tot$total.live.larvae ~ tank.lar.tot$Day*tank.lar.tot$Tank, ylab=expression(paste("Number of Larvae")), xlab=expression(paste("Tank")))
 
 dev.off()
 
@@ -213,10 +216,44 @@ plot(c(1,2),c(50000,200000), xaxt = "n", type="n", ylab=expression(paste("Algal 
 axis(1, at=1:2, labels=c("Ambient", "High"))
 plotCI(x=c(1,2), y=gmean_cells,uiw=gse_cells, liw=gse_cells,add=TRUE,gap=0.001, pch=20, col=c("blue", "red"))
 
-plot(gmean_larvae$Ambient, type = "o", xaxt = "n", ylim = c(900000, max(gmean_larvae$Ambient, gmean_larvae$High)), ylab=expression(paste("Number of Larvae")), xlab=expression(paste("Treatment")), col = "blue")  ## index plot with one variable
-lines(gmean_larvae$High, type = "o", lty = 2, col = "red")  ## add another variable
-axis(1, at=1:2, labels=c("Day0", "Day2"))
-plotCI(x=c(1,2), y=gmean_larvae, uiw=gse_larvae, liw=gse_larvae, add=TRUE, gap=0.001)
-legend("bottomleft", c("Ambient","High"), lwd=c(2,2), col=c("blue","red"), bty="n", cex=0.6) 
+#plot(gmean_larvae$Ambient, type = "o", xaxt = "n", ylim = c((min(gmean_larvae$Ambient, gmean_larvae$High)-20000), max(gmean_larvae$Ambient, gmean_larvae$High)), ylab=expression(paste("Number of Larvae")), xlab=expression(paste("Treatment")), col = "blue")  ## index plot with one variable
+#lines(gmean_larvae$High, type = "o", lty = 2, col = "red")  ## add another variable
+#axis(1, at=1:3, labels=c("Day0", "Day2", "Day4"))
+#plotCI(x=c(1:3), y=gmean_larvae, uiw=gse_larvae, liw=gse_larvae, add=TRUE, gap=0.001)
+#legend("bottomleft", c("Ambient","High"), lwd=c(2,2), col=c("blue","red"), bty="n", cex=0.6) 
+
+#total larvae in tanks
+levelProportions<-c(1,1,1,1,1,1) #width of box
+boxplot(total.live.larvae~Treatment*Day,data=larval.counts,col=c("blue","red"), xaxt = "n", width=levelProportions, frame.plot=TRUE, ylab=expression(paste("Number of Larvae")))
+axis(1, at=c(1.5, 3.5, 5.5), labels=c("Day0", "Day2", "Day4"))
+legend("bottomleft", c("Ambient","High"), fill=c("blue","red"), bty="n", cex=0.6) 
+
+# Add data points
+mylevels<-levels(larval.counts$Combo)
+for(i in 1:length(mylevels))
+{
+  thislevel<-mylevels[i]
+  thisvalues<-larval.counts[larval.counts$Combo==thislevel, "total.live.larvae"]
+  
+  # take the x-axis indices and add a jitter, proportional to the N in each level
+  myjitter<-jitter(rep(i, length(thisvalues)), amount=levelProportions[i]/10)
+  points(myjitter, thisvalues, pch=20, col=rgb(0,0,0,.2))   
+}
+
+#percent mortality in visual checks
+boxplot(per.mort~Treatment*Day,data=mortality,col=c("blue","red"), xaxt = "n", width=levelProportions, frame.plot=TRUE, ylab=expression(paste("% Mortality")))
+axis(1, at=c(1.5, 3.5, 5.5), labels=c("Day0", "Day2", "Day4"))
+legend("topleft", c("Ambient","High"), fill=c("blue","red"), bty="n", cex=0.6) 
+
+combos<-levels(as.factor(mortality$Combo))
+for(i in 1:length(combos))
+{
+  thislevel<-combos[i]
+  thisvalues<-mortality[mortality$Combo==thislevel, "per.mort"]
+  
+  # take the x-axis indices and add a jitter, proportional to the N in each level
+  myjitter<-jitter(rep(i, length(thisvalues)), amount=levelProportions[i]/10)
+  points(myjitter, thisvalues, pch=20, col=rgb(0,0,0,.2))   
+}
 
 dev.off()
