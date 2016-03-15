@@ -135,11 +135,7 @@ larval.counts$total.dead.larvae <- larval.counts$Dead.cells.ml*larval.counts$Vol
 larval.counts$per.mort <- ((larval.counts$total.dead.larvae/(larval.counts$total.live.larvae+larval.counts$total.dead.larvae))*100)
 lar.tot <- aggregate(total.live.larvae ~ Day, data=larval.counts, sum)
 tank.lar.tot <- aggregate(total.live.larvae ~ Day + Tank, data=larval.counts, sum)
-mortality <- aggregate(per.mort ~ Day + Tank, data=larval.counts, mean) 
-#Need to edit to remove hard coding 
-mortality$Combo <- c("Day 0 High","Day 2 High", "Day 4 High", "Day 0 Ambient", "Day 2 Ambient", "Day 4 Ambient", "Day 0 Ambient", "Day 2 Ambient", "Day 4 Ambient","Day 0 High", "Day 2 High", "Day 4 High","Day 0 High", "Day 2 High", "Day 4 High","Day 0 Ambient", "Day 2 Ambient", "Day 4 Ambient")
-mortality$Treatment <- c("High","High", "High", "Ambient", "Ambient", "Ambient", "Ambient", "Ambient", "Ambient","High", "High", "High","High", "High", "High","Ambient", "Ambient", "Ambient")
-
+mortality <- aggregate(per.mort ~ Day + Combo + Treatment, data=larval.counts, mean) 
 
 
 #Tanks
@@ -179,7 +175,7 @@ plotCI(x=c(1,2,3,4,5,6), y=mean_DIC,uiw=se_DIC, liw=se_DIC,add=TRUE,gap=0.001)
 plot(c(1,6),c(50000,200000),type="n", ylab=expression(paste("Algal Feed (Cells ml"^"-1",")")), xlab=expression(paste("Tank")))
 plotCI(x=c(1,2,3,4,5,6), y=mean_cells,uiw=se_cells, liw=se_cells,add=TRUE,gap=0.001)
 
-plot(tank.lar.tot$total.live.larvae ~ tank.lar.tot$Day*tank.lar.tot$Tank, ylab=expression(paste("Number of Larvae")), xlab=expression(paste("Tank")))
+#plot(tank.lar.tot$total.live.larvae ~ tank.lar.tot$Day*tank.lar.tot$Tank, ylab=expression(paste("Number of Larvae")), xlab=expression(paste("Tank")))
 
 dev.off()
 
@@ -223,9 +219,9 @@ plotCI(x=c(1,2), y=gmean_cells,uiw=gse_cells, liw=gse_cells,add=TRUE,gap=0.001, 
 #legend("bottomleft", c("Ambient","High"), lwd=c(2,2), col=c("blue","red"), bty="n", cex=0.6) 
 
 #total larvae in tanks
-levelProportions<-c(1,1,1,1,1,1) #width of box
-boxplot(total.live.larvae~Treatment*Day,data=larval.counts,col=c("blue","red"), xaxt = "n", width=levelProportions, frame.plot=TRUE, ylab=expression(paste("Number of Larvae")))
-axis(1, at=c(1.5, 3.5, 5.5), labels=c("Day0", "Day2", "Day4"))
+levelProportions<-c(1,1,1,1,1,1,1,1) #width of box
+boxplot(total.live.larvae~Treatment*Day,data=larval.counts,col=c("blue","red"), xaxt = "n", width=levelProportions, frame.plot=TRUE, ylab=expression(paste("Number of Live Larvae")))
+axis(1, at=c(1.5, 3.5, 5.5, 7.5), labels=c("Day0", "Day2", "Day4", "Day6"))
 legend("bottomleft", c("Ambient","High"), fill=c("blue","red"), bty="n", cex=0.6) 
 
 # Add data points
@@ -241,15 +237,15 @@ for(i in 1:length(mylevels))
 }
 
 #percent mortality in visual checks
-boxplot(per.mort~Treatment*Day,data=mortality,col=c("blue","red"), xaxt = "n", width=levelProportions, frame.plot=TRUE, ylab=expression(paste("% Mortality")))
-axis(1, at=c(1.5, 3.5, 5.5), labels=c("Day0", "Day2", "Day4"))
+boxplot(per.mort~Treatment*Day,data=larval.counts,col=c("blue","red"), xaxt = "n", width=levelProportions, frame.plot=TRUE, ylab=expression(paste("% Mortality in Visual Checks")))
+axis(1, at=c(1.5, 3.5, 5.5, 7.5), labels=c("Day0", "Day2", "Day4", "Day6"))
 legend("topleft", c("Ambient","High"), fill=c("blue","red"), bty="n", cex=0.6) 
 
-combos<-levels(as.factor(mortality$Combo))
+combos<-levels(as.factor(larval.counts$Combo))
 for(i in 1:length(combos))
 {
   thislevel<-combos[i]
-  thisvalues<-mortality[mortality$Combo==thislevel, "per.mort"]
+  thisvalues<-larval.counts[larval.counts$Combo==thislevel, "per.mort"]
   
   # take the x-axis indices and add a jitter, proportional to the N in each level
   myjitter<-jitter(rep(i, length(thisvalues)), amount=levelProportions[i]/10)
@@ -257,3 +253,23 @@ for(i in 1:length(combos))
 }
 
 dev.off()
+
+#Load WiSH data
+wish.data <- read.csv("Wish_data.csv", header=TRUE, sep=",", na.strings="NA") #load data with a header, separated by commas, with NA as NA
+date.time <- sub("-",",", wish.data$Date...Time)
+date.time <- strsplit(date.time, ",")
+date.time <- data.frame(matrix(unlist(date.time), nrow=length(date.time), byrow=T),stringsAsFactors=FALSE)
+temp.data <- wish.data[,grepl("Tank", colnames(wish.data))] #search for and subset columns containing the header name "Tank"
+temp.data <- cbind(date.time, temp.data)
+colnames(temp.data) <- c("Date", "Time", "Tank3", "Tank6", "Tank4", "Tank1", "Tank5", "Tank2")
+
+##Need to plot temp data
+plot(temp.data$Tank1,type="l", col="pink", ylab=expression(paste("Temperature °C")), xlab=expression(paste("Time")))
+lines(temp.data$Tank2, col="lightblue" )
+lines(temp.data$Tank3, col="blue")
+lines(temp.data$Tank4, col="red")
+lines(temp.data$Tank5, col="darkred")
+lines(temp.data$Tank6, col="darkblue")
+legend("topleft", c("Tank1","Tank2", "Tank3","Tank4","Tank5", "Tank6" ), col=c("pink","lightblue", "blue", "red", "darkred", "darkblue"), bty="n", lwd=1, cex=0.6) 
+
+
