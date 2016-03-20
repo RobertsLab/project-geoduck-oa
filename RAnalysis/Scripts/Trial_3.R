@@ -45,7 +45,7 @@ colnames(pH.cals) <- c("Calib.Date",  "Intercept",  "Slope", "R2")
 pH.cals
 
 # read in total alkalinity, temperature, and salinity
-SW.chem <- read.csv("SW_Chem_Exp.csv", header=TRUE, sep=",", na.strings="NA") #load data with a header, separated by commas, with NA as NA
+SW.chem <- read.csv("SW_Chem_Trial3.csv", header=TRUE, sep=",", na.strings="NA") #load data with a header, separated by commas, with NA as NA
 
 #merge with Seawater chemistry file
 SW.chem <- merge(pH.cals, SW.chem, by="Calib.Date")
@@ -107,11 +107,11 @@ mean.carb.output <- rbind(gmean_pCO2, gse_pCO2, gmean_pH, gse_pH, gmean_Temp, gs
 mean.carb.output <- as.data.frame(mean.carb.output)
 row.names(mean.carb.output) <- c("mean pCO2", "SE pCO2", "mean pH", "SE pH", "mean Temperature", "SE Temperature", "mean Salinity", "SE Salinity", "mean Total Alkalinity", "SE Total Alkalinity", "mean DIC", "SE DIC")
 mean.carb.output$Variables <- row.names(mean.carb.output)
-write.table (mean.carb.output, file="/Users/hputnam/MyProjects/Geoduck_Epi/project-geoduck-oa/RAnalysis/Output/Seawater_chemistry_table_Output.csv", sep=",", row.names = FALSE)
+write.table (mean.carb.output, file="/Users/hputnam/MyProjects/Geoduck_Epi/project-geoduck-oa/RAnalysis/Output/Seawater_chemistry_table_Output_Trial3.csv", sep=",", row.names = FALSE)
 
 ##### Cell Counts #####
 
-cell.counts <- read.csv("Cell_Counts.csv", header=TRUE, sep=",", na.strings="NA") #load data with a header, separated by commas, with NA as NA
+cell.counts <- read.csv("Cell_Counts_Trial3.csv", header=TRUE, sep=",", na.strings="NA") #load data with a header, separated by commas, with NA as NA
 cell.counts$Avg.Cells <- rowMeans(cell.counts[,c("Count1",  "Count2",	"Count3",	"Count4")], na.rm = TRUE) #calculate average of counts
 cell.counts$cells.ml <- cell.counts$Avg.Cells/cell.counts$Volume.Counted #calculate density
 
@@ -125,7 +125,7 @@ gse_cells <- tapply(cell.counts$cells.ml, cell.counts$Treatment, std.error, na.r
 
 ##### Larval Counts #####
 
-larval.counts <- read.csv("Larval_Counts.csv", header=TRUE, sep=",", na.strings="NA") #load data with a header, separated by commas, with NA as NA
+larval.counts <- read.csv("Larval_Counts_Trial3.csv", header=TRUE, sep=",", na.strings="NA") #load data with a header, separated by commas, with NA as NA
 larval.counts$Avg.Live <- rowMeans(larval.counts[,c("Live1",  "Live2",  "Live3",	"Live4", "Live5")], na.rm = TRUE) #calculate average of counts
 larval.counts$Avg.Dead <- rowMeans(larval.counts[,c("Dead1",  "Dead2",  "Dead3",  "Dead4", "Dead5")], na.rm = TRUE) #calculate average of counts
 larval.counts$Live.cells.ml <- larval.counts$Avg.Live/larval.counts$Volume.Counted.ml #calculate density
@@ -150,14 +150,14 @@ gmean_larvae <- as.data.frame(gmean_larvae)
 
 
 ##### Plot Tank and Treatment mean ± se #####
-pdf("/Users/hputnam/MyProjects/Geoduck_Epi/project-geoduck-oa/RAnalysis/Output/running_carbonate_chemistry_tanks.pdf")
-par(cex.axis=0.8, cex.lab=0.8, mar=c(5, 5, 4, 2),mgp=c(3.7, 0.8, 0),las=1, mfrow=c(3,3))
+pdf("/Users/hputnam/MyProjects/Geoduck_Epi/project-geoduck-oa/RAnalysis/Output/running_carbonate_chemistry_tanks_Trial3.pdf")
+par(cex.axis=0.8, cex.lab=0.8, mar=c(5, 5, 4, 2),mgp=c(3.7, 0.8, 0),las=1, mfrow=c(3,3),oma=c(0,0,2,0))
 
 #Tanks
-plot(c(1,6),c(0,2400),type="n",ylab=expression(paste("pCO"["2"])), xlab=expression(paste("Tank")))
+plot(c(1,6),c(0,5000),type="n",ylab=expression(paste("pCO"["2"])), xlab=expression(paste("Tank")))
 plotCI(x=c(1,2,3,4,5,6), y=mean_pCO2,uiw=se_pCO2, liw=se_pCO2,add=TRUE,gap=0.001)
 
-plot(c(1,6),c(6,9),type="n",ylab=expression(paste("pH")), xlab=expression(paste("Tank")))
+plot(c(1,6),c(6.6,7.5),type="n",ylab=expression(paste("pH")), xlab=expression(paste("Tank")))
 plotCI(x=c(1,2,3,4,5,6), y=mean_pH,uiw=se_pH, liw=se_pH,add=TRUE,gap=0.001)
 
 plot(c(1,6),c(12,15),type="n",ylab=expression(paste("Temperature °C")), xlab=expression(paste("Tank")))
@@ -169,48 +169,51 @@ plotCI(x=c(1,2,3,4,5,6), y=mean_Sal,uiw=se_Sal, liw=se_Sal,add=TRUE,gap=0.001)
 plot(c(1,6),c(1800,2200),type="n",ylab=expression(paste("Total Alkalinity µmol kg"^"-1")), xlab=expression(paste("Tank")))
 plotCI(x=c(1,2,3,4,5,6), y=mean_TA,uiw=se_TA, liw=se_TA,add=TRUE,gap=0.001)
 
-plot(c(1,6),c(1800,2200),type="n",ylab=expression(paste("DIC µmol kg"^"-1")), xlab=expression(paste("Tank")))
+plot(c(1,6),c(1800,2400),type="n",ylab=expression(paste("DIC µmol kg"^"-1")), xlab=expression(paste("Tank")))
 plotCI(x=c(1,2,3,4,5,6), y=mean_DIC,uiw=se_DIC, liw=se_DIC,add=TRUE,gap=0.001)
 
-plot(c(1,6),c(50000,200000),type="n", ylab=expression(paste("Algal Feed (Cells ml"^"-1",")")), xlab=expression(paste("Tank")))
+plot(c(1,6),c(40000,70000),type="n", ylab=expression(paste("Algal Feed (Cells ml"^"-1",")")), xlab=expression(paste("Tank")))
 plotCI(x=c(1,2,3,4,5,6), y=mean_cells,uiw=se_cells, liw=se_cells,add=TRUE,gap=0.001)
 
 #plot(tank.lar.tot$total.live.larvae ~ tank.lar.tot$Day*tank.lar.tot$Tank, ylab=expression(paste("Number of Larvae")), xlab=expression(paste("Tank")))
-
+title("Tank Conditions Trial 3", outer=TRUE)
 dev.off()
 
 
-pdf("/Users/hputnam/MyProjects/Geoduck_Epi/project-geoduck-oa/RAnalysis/Output/running_carbonate_chemistry_treatments.pdf")
-par(cex.axis=0.8, cex.lab=0.8, mar=c(5, 5, 4, 2),mgp=c(3.7, 0.8, 0),las=1, mfrow=c(3,3))
+pdf("/Users/hputnam/MyProjects/Geoduck_Epi/project-geoduck-oa/RAnalysis/Output/running_carbonate_chemistry_treatments_Trial3.pdf")
+par(cex.axis=0.8, cex.lab=0.8, mar=c(5, 5, 4, 2),mgp=c(3.7, 0.8, 0),las=1, mfrow=c(3,3),oma=c(0,0,2,0))
 
 #Treatments
-plot(c(1,2),c(0,2400), xaxt = "n", type="n",ylab=expression(paste("pCO"["2"])), xlab=expression(paste("Treatment")))
-axis(1, at=1:2, labels=c("Ambient", "High"))
-plotCI(x=c(1,2), y=gmean_pCO2,uiw=gse_pCO2, liw=gse_pCO2,add=TRUE,gap=0.001, pch=20, col=c("blue", "red"))
+plot(c(1,2),c(0,5000), xaxt = "n", type="n",ylab=expression(paste("pCO"["2"])), xlab=expression(paste("Treatment")))
+axis(1, at=1:2, labels=c("pH 7.01", "pH 7.38"))
+plotCI(x=c(1,2), y=gmean_pCO2,uiw=gse_pCO2, liw=gse_pCO2,add=TRUE,gap=0.001, pch=20, col=c("red", "pink"))
 
-plot(c(1,2),c(7,8.5), xaxt = "n", type="n",ylab=expression(paste("pH")), xlab=expression(paste("Treatment")))
-axis(1, at=1:2, labels=c("Ambient", "High"))
-plotCI(x=c(1,2), y=gmean_pH,uiw=gse_pH, liw=gse_pH,add=TRUE,gap=0.001, pch=20, col=c("blue", "red"))
+plot(c(1,2),c(6.6,7.5), xaxt = "n", type="n",ylab=expression(paste("pH")), xlab=expression(paste("Treatment")))
+axis(1, at=1:2, labels=c("pH 7.01", "pH 7.38"))
+plotCI(x=c(1,2), y=gmean_pH,uiw=gse_pH, liw=gse_pH,add=TRUE,gap=0.001, pch=20, col=c("red", "pink"))
 
-plot(c(1,2),c(13,15), xaxt = "n", type="n",ylab=expression(paste("Temperature °C")), xlab=expression(paste("Treatment")))
-axis(1, at=1:2, labels=c("Ambient", "High"))
-plotCI(x=c(1,2), y=gmean_Temp,uiw=gse_Temp, liw=gse_Temp,add=TRUE,gap=0.001, pch=20, col=c("blue", "red"))
+plot(c(1,2),c(12,15), xaxt = "n", type="n",ylab=expression(paste("Temperature °C")), xlab=expression(paste("Treatment")))
+axis(1, at=1:2, labels=c("pH 7.01", "pH 7.38"))
+plotCI(x=c(1,2), y=gmean_Temp,uiw=gse_Temp, liw=gse_Temp,add=TRUE,gap=0.001, pch=20, col=c("red", "pink"))
 
 plot(c(1,2),c(25,29), xaxt = "n", type="n",ylab=expression(paste("Salinity")), xlab=expression(paste("Treatment")))
-axis(1, at=1:2, labels=c("Ambient", "High"))
-plotCI(x=c(1,2), y=gmean_Sal,uiw=gse_Sal, liw=gse_Sal,add=TRUE,gap=0.001, pch=20, col=c("blue", "red"))
+axis(1, at=1:2, labels=c("pH 7.01", "pH 7.38"))
+plotCI(x=c(1,2), y=gmean_Sal,uiw=gse_Sal, liw=gse_Sal,add=TRUE,gap=0.001, pch=20, col=c("red", "pink"))
 
 plot(c(1,2),c(1800,2200), xaxt = "n", type="n",ylab=expression(paste("Total Alkalinity µmol kg"^"-1")), xlab=expression(paste("Treatment")))
-axis(1, at=1:2, labels=c("Ambient", "High"))
-plotCI(x=c(1,2), y=gmean_TA,uiw=gse_TA, liw=gse_TA,add=TRUE,gap=0.001, pch=20, col=c("blue", "red"))
+axis(1, at=1:2, labels=c("pH 7.01", "pH 7.38"))
+plotCI(x=c(1,2), y=gmean_TA,uiw=gse_TA, liw=gse_TA,add=TRUE,gap=0.001, pch=20, col=c("red", "pink"))
 
-plot(c(1,2),c(1800,2200), xaxt = "n", type="n",ylab=expression(paste("DIC µmol kg"^"-1")), xlab=expression(paste("Treatment")))
-axis(1, at=1:2, labels=c("Ambient", "High"))
-plotCI(x=c(1,2), y=gmean_DIC,uiw=gse_DIC, liw=gse_DIC,add=TRUE,gap=0.001, pch=20, col=c("blue", "red"))
+plot(c(1,2),c(1800,2400), xaxt = "n", type="n",ylab=expression(paste("DIC µmol kg"^"-1")), xlab=expression(paste("Treatment")))
+axis(1, at=1:2, labels=c("pH 7.01", "pH 7.38"))
+plotCI(x=c(1,2), y=gmean_DIC,uiw=gse_DIC, liw=gse_DIC,add=TRUE,gap=0.001, pch=20, col=c("red", "pink"))
 
-plot(c(1,2),c(50000,200000), xaxt = "n", type="n", ylab=expression(paste("Algal Feed (Cells ml"^"-1",")")), xlab=expression(paste("Treatment")))
-axis(1, at=1:2, labels=c("Ambient", "High"))
-plotCI(x=c(1,2), y=gmean_cells,uiw=gse_cells, liw=gse_cells,add=TRUE,gap=0.001, pch=20, col=c("blue", "red"))
+plot(c(1,2),c(50000,80000), xaxt = "n", type="n", ylab=expression(paste("Algal Feed (Cells ml"^"-1",")")), xlab=expression(paste("Treatment")))
+axis(1, at=1:2, labels=c("pH 7.01", "pH 7.38"))
+plotCI(x=c(1,2), y=gmean_cells,uiw=gse_cells, liw=gse_cells,add=TRUE,gap=0.001, pch=20, col=c("red", "pink"))
+
+title("Treatment Conditions Trial 3", outer=TRUE)
+dev.off()
 
 #plot(gmean_larvae$Ambient, type = "o", xaxt = "n", ylim = c((min(gmean_larvae$Ambient, gmean_larvae$High)-20000), max(gmean_larvae$Ambient, gmean_larvae$High)), ylab=expression(paste("Number of Larvae")), xlab=expression(paste("Treatment")), col = "blue")  ## index plot with one variable
 #lines(gmean_larvae$High, type = "o", lty = 2, col = "red")  ## add another variable
@@ -218,41 +221,41 @@ plotCI(x=c(1,2), y=gmean_cells,uiw=gse_cells, liw=gse_cells,add=TRUE,gap=0.001, 
 #plotCI(x=c(1:3), y=gmean_larvae, uiw=gse_larvae, liw=gse_larvae, add=TRUE, gap=0.001)
 #legend("bottomleft", c("Ambient","High"), lwd=c(2,2), col=c("blue","red"), bty="n", cex=0.6) 
 
-#total larvae in tanks
-levelProportions<-c(1,1,1,1,1,1,1,1) #width of box
-boxplot(total.live.larvae~Treatment*Day,data=larval.counts,col=c("blue","red"), xaxt = "n", width=levelProportions, frame.plot=TRUE, ylab=expression(paste("Number of Live Larvae")))
-axis(1, at=c(1.5, 3.5, 5.5, 7.5), labels=c("Day0", "Day2", "Day4", "Day6"))
-legend("bottomleft", c("Ambient","High"), fill=c("blue","red"), bty="n", cex=0.6) 
-
-# Add data points
-mylevels<-levels(larval.counts$Combo)
-for(i in 1:length(mylevels))
-{
-  thislevel<-mylevels[i]
-  thisvalues<-larval.counts[larval.counts$Combo==thislevel, "total.live.larvae"]
-  
-  # take the x-axis indices and add a jitter, proportional to the N in each level
-  myjitter<-jitter(rep(i, length(thisvalues)), amount=levelProportions[i]/10)
-  points(myjitter, thisvalues, pch=20, col=rgb(0,0,0,.2))   
-}
-
-#percent mortality in visual checks
-boxplot(per.mort~Treatment*Day,data=larval.counts,col=c("blue","red"), xaxt = "n", width=levelProportions, frame.plot=TRUE, ylab=expression(paste("% Mortality in Visual Checks")))
-axis(1, at=c(1.5, 3.5, 5.5, 7.5), labels=c("Day0", "Day2", "Day4", "Day6"))
-legend("topleft", c("Ambient","High"), fill=c("blue","red"), bty="n", cex=0.6) 
-
-combos<-levels(as.factor(larval.counts$Combo))
-for(i in 1:length(combos))
-{
-  thislevel<-combos[i]
-  thisvalues<-larval.counts[larval.counts$Combo==thislevel, "per.mort"]
-  
-  # take the x-axis indices and add a jitter, proportional to the N in each level
-  myjitter<-jitter(rep(i, length(thisvalues)), amount=levelProportions[i]/10)
-  points(myjitter, thisvalues, pch=20, col=rgb(0,0,0,.2))   
-}
-
-dev.off()
+# #total larvae in tanks
+# levelProportions<-c(1,1,1,1,1,1,1,1) #width of box
+# boxplot(total.live.larvae~Treatment*Day,data=larval.counts,col=c("blue","red"), xaxt = "n", width=levelProportions, frame.plot=TRUE, ylab=expression(paste("Number of Live Larvae")))
+# axis(1, at=c(1.5, 3.5, 5.5, 7.5), labels=c("Day0", "Day2", "Day4", "Day6"))
+# legend("bottomleft", c("Ambient","High"), fill=c("blue","red"), bty="n", cex=0.6) 
+# 
+# # Add data points
+# mylevels<-levels(larval.counts$Combo)
+# for(i in 1:length(mylevels))
+# {
+#   thislevel<-mylevels[i]
+#   thisvalues<-larval.counts[larval.counts$Combo==thislevel, "total.live.larvae"]
+#   
+#   # take the x-axis indices and add a jitter, proportional to the N in each level
+#   myjitter<-jitter(rep(i, length(thisvalues)), amount=levelProportions[i]/10)
+#   points(myjitter, thisvalues, pch=20, col=rgb(0,0,0,.2))   
+# }
+# 
+# #percent mortality in visual checks
+# boxplot(per.mort~Treatment*Day,data=larval.counts,col=c("blue","red"), xaxt = "n", width=levelProportions, frame.plot=TRUE, ylab=expression(paste("% Mortality in Visual Checks")))
+# axis(1, at=c(1.5, 3.5, 5.5, 7.5), labels=c("Day0", "Day2", "Day4", "Day6"))
+# legend("topleft", c("Ambient","High"), fill=c("blue","red"), bty="n", cex=0.6) 
+# 
+# combos<-levels(as.factor(larval.counts$Combo))
+# for(i in 1:length(combos))
+# {
+#   thislevel<-combos[i]
+#   thisvalues<-larval.counts[larval.counts$Combo==thislevel, "per.mort"]
+#   
+#   # take the x-axis indices and add a jitter, proportional to the N in each level
+#   myjitter<-jitter(rep(i, length(thisvalues)), amount=levelProportions[i]/10)
+#   points(myjitter, thisvalues, pch=20, col=rgb(0,0,0,.2))   
+# }
+# 
+# dev.off()
 
 #Load WiSH data
 wish.data <- read.csv("Wish_data.csv", header=TRUE, sep=",", na.strings="NA") #load data with a header, separated by commas, with NA as NA
@@ -271,5 +274,3 @@ lines(temp.data$Tank4, col="red")
 lines(temp.data$Tank5, col="darkred")
 lines(temp.data$Tank6, col="darkblue")
 legend("topleft", c("Tank1","Tank2", "Tank3","Tank4","Tank5", "Tank6" ), col=c("pink","lightblue", "blue", "red", "darkred", "darkblue"), bty="n", lwd=1, cex=0.6) 
-
-
