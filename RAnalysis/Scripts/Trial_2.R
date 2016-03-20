@@ -199,33 +199,33 @@ pdf("/Users/hputnam/MyProjects/Geoduck_Epi/project-geoduck-oa/RAnalysis/Output/r
 par(cex.axis=0.8, cex.lab=0.8, mar=c(5, 5, 4, 2),mgp=c(3.7, 0.8, 0),las=1, mfrow=c(3,3),oma=c(0,0,2,0))
 
 #Treatments
-plot(c(1,2),c(0,2400), xaxt = "n", type="n",ylab=expression(paste("pCO"["2"])), xlab=expression(paste("Treatment")))
-axis(1, at=1:2, labels=c("pH 7.90", "pH 7.41"))
-plotCI(x=c(1,2), y=gmean_pCO2,uiw=gse_pCO2, liw=gse_pCO2,add=TRUE,gap=0.001, pch=20, col=c("blue", "red"))
+plot(c(1,2,3),c(0,4500, 4500), xaxt = "n", type="n",ylab=expression(paste("pCO"["2"])), xlab=expression(paste("Treatment")))
+axis(1, at=1:3, labels=c("pH 7.00", "pH 7.41","pH 7.90"))
+plotCI(x=c(1:3), y=gmean_pCO2,uiw=gse_pCO2, liw=gse_pCO2,add=TRUE,gap=0.001, pch=20, , col=c("blue", "pink", "red"))
 
-plot(c(1,2),c(7,8.5), xaxt = "n", type="n",ylab=expression(paste("pH")), xlab=expression(paste("Treatment")))
-axis(1, at=1:2, labels=c("pH 7.90", "pH 7.41"))
-plotCI(x=c(1,2), y=gmean_pH,uiw=gse_pH, liw=gse_pH,add=TRUE,gap=0.001, pch=20, col=c("blue", "red"))
+plot(c(1,2,3),c(7,8.5,8.5), xaxt = "n", type="n",ylab=expression(paste("pH")), xlab=expression(paste("Treatment")))
+axis(1, at=1:3, labels=c("pH 7.00", "pH 7.41","pH 7.90"))
+plotCI(x=c(1:3), y=gmean_pH,uiw=gse_pH, liw=gse_pH,add=TRUE,gap=0.001, pch=20, , col=c("blue", "pink", "red"))
 
-plot(c(1,2),c(13,15), xaxt = "n", type="n",ylab=expression(paste("Temperature °C")), xlab=expression(paste("Treatment")))
-axis(1, at=1:2, labels=c("pH 7.90", "pH 7.41"))
-plotCI(x=c(1,2), y=gmean_Temp,uiw=gse_Temp, liw=gse_Temp,add=TRUE,gap=0.001, pch=20, col=c("blue", "red"))
+plot(c(1,2,3),c(13,15,15), xaxt = "n", type="n",ylab=expression(paste("Temperature °C")), xlab=expression(paste("Treatment")))
+axis(1, at=1:3, labels=c("pH 7.00", "pH 7.41","pH 7.90"))
+plotCI(x=c(1:3), y=gmean_Temp,uiw=gse_Temp, liw=gse_Temp,add=TRUE,gap=0.001, pch=20, , col=c("blue", "pink", "red"))
 
-plot(c(1,2),c(25,29), xaxt = "n", type="n",ylab=expression(paste("Salinity")), xlab=expression(paste("Treatment")))
-axis(1, at=1:2, labels=c("pH 7.90", "pH 7.41"))
-plotCI(x=c(1,2), y=gmean_Sal,uiw=gse_Sal, liw=gse_Sal,add=TRUE,gap=0.001, pch=20, col=c("blue", "red"))
+plot(c(1,2,3),c(25,29, 29), xaxt = "n", type="n",ylab=expression(paste("Salinity")), xlab=expression(paste("Treatment")))
+axis(1, at=1:3, labels=c("pH 7.00", "pH 7.41","pH 7.90"))
+plotCI(x=c(1:3), y=gmean_Sal,uiw=gse_Sal, liw=gse_Sal,add=TRUE,gap=0.001, pch=20, , col=c("blue", "pink", "red"))
 
-plot(c(1,2),c(1800,2200), xaxt = "n", type="n",ylab=expression(paste("Total Alkalinity µmol kg"^"-1")), xlab=expression(paste("Treatment")))
-axis(1, at=1:2, labels=c("pH 7.90", "pH 7.41"))
-plotCI(x=c(1,2), y=gmean_TA,uiw=gse_TA, liw=gse_TA,add=TRUE,gap=0.001, pch=20, col=c("blue", "red"))
+plot(c(1,2,3),c(1800,2200,2200), xaxt = "n", type="n",ylab=expression(paste("Total Alkalinity µmol kg"^"-1")), xlab=expression(paste("Treatment")))
+axis(1, at=1:3, labels=c("pH 7.00", "pH 7.41","pH 7.90"))
+plotCI(x=c(1:3), y=gmean_TA,uiw=gse_TA, liw=gse_TA,add=TRUE,gap=0.001, pch=20, , col=c("blue", "pink", "red"))
 
-plot(c(1,2),c(1800,2200), xaxt = "n", type="n",ylab=expression(paste("DIC µmol kg"^"-1")), xlab=expression(paste("Treatment")))
-axis(1, at=1:2, labels=c("pH 7.90", "pH 7.41"))
-plotCI(x=c(1,2), y=gmean_DIC,uiw=gse_DIC, liw=gse_DIC,add=TRUE,gap=0.001, pch=20, col=c("blue", "red"))
+plot(c(1,2,3),c(1800,2200,2200), xaxt = "n", type="n",ylab=expression(paste("DIC µmol kg"^"-1")), xlab=expression(paste("Treatment")))
+axis(1, at=1:3, labels=c("pH 7.00", "pH 7.41","pH 7.90"))
+plotCI(x=c(1:3), y=gmean_DIC,uiw=gse_DIC, liw=gse_DIC,add=TRUE,gap=0.001, pch=20, , col=c("blue", "pink", "red"))
 
-plot(c(1,2),c(50000,200000), xaxt = "n", type="n", ylab=expression(paste("Algal Feed (Cells ml"^"-1",")")), xlab=expression(paste("Treatment")))
-axis(1, at=1:2, labels=c("pH 7.90", "pH 7.41"))
-plotCI(x=c(1,2), y=gmean_cells,uiw=gse_cells, liw=gse_cells,add=TRUE,gap=0.001, pch=20, col=c("blue", "red"))
+#plot(c(1,2,3),c(50000,200000,200000), xaxt = "n", type="n", ylab=expression(paste("Algal Feed (Cells ml"^"-1",")")), xlab=expression(paste("Treatment")))
+#axis(1, at=1:3, labels=c("pH 7.28", "pH 7.41","pH 7.90"))
+#plotCI(x=c(1:3), y=gmean_cells,uiw=gse_cells, liw=gse_cells,add=TRUE,gap=0.001, pch=20, , col=c("blue", "pink", "red"))
 title("Treatment Conditions Trial 2", outer=TRUE)
 dev.off()
 
@@ -237,7 +237,7 @@ par(fig=c(0.0,0.5,0,0.8), bty="n")
 boxplot(total.live.larvae~Treatment*Day,data=part.one, col=c("blue","pink"), xaxt = "n",  varwidth=T, ylim=(c(10000,1200000)), frame.plot=F, ylab=expression(paste("Number of Live Larvae")))
 axis(1, at=c(9.5, 13.5, 17.5, 21.5), labels=c("Day0", "Day2", "Day4", "Day6"), cex=0.6, cex.axis=0.6)
 text(1, 1100000, "A")
-legend("bottomleft", c("pH 8.0","pH 7.35","pH 7.00"), fill=c("blue","pink", "red"), bty="n", cex=0.6) 
+legend("bottomleft", c("pH 8.0","pH 7.41","pH 7.00"), fill=c("blue","pink", "red"), bty="n", cex=0.6) 
 
 par(fig=c(0.3,0.9,0,0.8), bty="n", new=TRUE)
 boxplot(total.live.larvae~Treatment*Day,data=part.two, col=c("red","pink"), axes=FALSE, varwidth=T, ylim=(c(10000,1200000)), frame.plot=F)
@@ -249,7 +249,6 @@ boxplot(total.live.larvae~Treatment*Day,data=part.two, col=c("red","pink"), xaxt
 axis(1, at=c(3.5, 7.5), labels=c("Day7", "Day10"), cex=0.6, cex.axis=0.6) 
 rect(xleft=9, xright=2, ybottom=0, ytop=160000,col = color)
 text(1, 165000, "C")
-#legend("topright", c("pH 7.3","pH 7.0"), fill=c("pink","red"), bty="n", cex=0.6) 
 
 dev.off()
 
