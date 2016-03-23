@@ -1,6 +1,6 @@
 #project-geoduck-oa
 #Data from Roberts et al NOAA OA
-#last modified 20160304 H Putnam
+#last modified 20160320 H Putnam
 
 
 rm(list=ls()) # removes all prior objects
@@ -15,9 +15,9 @@ setwd("/Users/hputnam/MyProjects/Geoduck_Epi/project-geoduck-oa/RAnalysis/Data/"
 
 #Required Data files
 #pH_Calibration_Files/
-#SW_Chem.csv
-#Cell_Counts.csv
-#Larval_Counts.csv
+#SW_Chem_Trial3.csv
+#Cell_Counts_Trial3.csv
+#Larval_Counts_Trial3.csv
 
 #SEAWATER CHEMISTRY ANALYSIS FOR DISCRETE MEASUREMENTS
 
@@ -112,7 +112,7 @@ write.table (mean.carb.output, file="/Users/hputnam/MyProjects/Geoduck_Epi/proje
 ##### Cell Counts #####
 
 cell.counts <- read.csv("Cell_Counts_Trial3.csv", header=TRUE, sep=",", na.strings="NA") #load data with a header, separated by commas, with NA as NA
-cell.counts$Avg.Cells <- rowMeans(cell.counts[,c("Count1",  "Count2",	"Count3",	"Count4")], na.rm = TRUE) #calculate average of counts
+cell.counts$Avg.Cells <- rowMeans(cell.counts[,c("Count1",  "Count2")], na.rm = TRUE) #calculate average of counts
 cell.counts$cells.ml <- cell.counts$Avg.Cells/cell.counts$Volume.Counted #calculate density
 
 #Tanks
@@ -124,10 +124,9 @@ gmean_cells <- tapply(cell.counts$cells.ml, cell.counts$Treatment, mean, na.rm =
 gse_cells <- tapply(cell.counts$cells.ml, cell.counts$Treatment, std.error, na.rm = TRUE)
 
 ##### Larval Counts #####
-
 larval.counts <- read.csv("Larval_Counts_Trial3.csv", header=TRUE, sep=",", na.strings="NA") #load data with a header, separated by commas, with NA as NA
-larval.counts$Avg.Live <- rowMeans(larval.counts[,c("Live1",  "Live2",  "Live3",	"Live4", "Live5")], na.rm = TRUE) #calculate average of counts
-larval.counts$Avg.Dead <- rowMeans(larval.counts[,c("Dead1",  "Dead2",  "Dead3",  "Dead4", "Dead5")], na.rm = TRUE) #calculate average of counts
+larval.counts$Avg.Live <- rowMeans(larval.counts[,c("Live1",  "Live2",  "Live3")], na.rm = TRUE) #calculate average of counts
+larval.counts$Avg.Dead <- rowMeans(larval.counts[,c("Dead1",  "Dead2",  "Dead3")], na.rm = TRUE) #calculate average of counts
 larval.counts$Live.cells.ml <- larval.counts$Avg.Live/larval.counts$Volume.Counted.ml #calculate density
 larval.counts$Dead.cells.ml <- larval.counts$Avg.Dead/larval.counts$Volume.Counted.ml #calculate density
 larval.counts$total.live.larvae <- larval.counts$Live.cells.ml*larval.counts$Vol.Tripour
@@ -136,7 +135,6 @@ larval.counts$per.mort <- ((larval.counts$total.dead.larvae/(larval.counts$total
 lar.tot <- aggregate(total.live.larvae ~ Day, data=larval.counts, sum)
 tank.lar.tot <- aggregate(total.live.larvae ~ Day + Tank, data=larval.counts, sum)
 mortality <- aggregate(per.mort ~ Day + Combo + Treatment, data=larval.counts, mean) 
-
 
 #Tanks
 mean_larvae=tapply(larval.counts$total.live.larvae , list(larval.counts$Day, larval.counts$Tank), mean, na.rm = TRUE)
@@ -147,7 +145,6 @@ gmean_larvae <- tapply(larval.counts$total.live.larvae , list(larval.counts$Day,
 gmean_larvae_samp <- tapply(larval.counts$total.live.larvae , list(larval.counts$Day, larval.counts$Treatment), mean, na.rm = TRUE)
 gse_larvae <- tapply(larval.counts$total.live.larvae , list(larval.counts$Day, larval.counts$Treatment), std.error, na.rm = TRUE)
 gmean_larvae <- as.data.frame(gmean_larvae)
-
 
 ##### Plot Tank and Treatment mean ± se #####
 pdf("/Users/hputnam/MyProjects/Geoduck_Epi/project-geoduck-oa/RAnalysis/Output/running_carbonate_chemistry_tanks_Trial3.pdf")
@@ -212,32 +209,23 @@ plot(c(1,2),c(50000,80000), xaxt = "n", type="n", ylab=expression(paste("Algal F
 axis(1, at=1:2, labels=c("pH 7.01", "pH 7.38"))
 plotCI(x=c(1,2), y=gmean_cells,uiw=gse_cells, liw=gse_cells,add=TRUE,gap=0.001, pch=20, col=c("red", "pink"))
 
-title("Treatment Conditions Trial 3", outer=TRUE)
-dev.off()
+#total larvae in tanks
+boxplot(total.live.larvae~Treatment*Day,data=larval.counts,col=c("red","pink"), xaxt = "n", varwidth=T, frame.plot=TRUE, ylab=expression(paste("Number of Live Larvae")))
+axis(1, at=c(1.5, 3.5), labels=c("Day2", "Day4"))
+legend("topright", c("pH 7.01","pH 7.38"), fill=c("red","pink"), bty="n", cex=0.6) 
 
-#plot(gmean_larvae$Ambient, type = "o", xaxt = "n", ylim = c((min(gmean_larvae$Ambient, gmean_larvae$High)-20000), max(gmean_larvae$Ambient, gmean_larvae$High)), ylab=expression(paste("Number of Larvae")), xlab=expression(paste("Treatment")), col = "blue")  ## index plot with one variable
-#lines(gmean_larvae$High, type = "o", lty = 2, col = "red")  ## add another variable
-#axis(1, at=1:3, labels=c("Day0", "Day2", "Day4"))
-#plotCI(x=c(1:3), y=gmean_larvae, uiw=gse_larvae, liw=gse_larvae, add=TRUE, gap=0.001)
-#legend("bottomleft", c("Ambient","High"), lwd=c(2,2), col=c("blue","red"), bty="n", cex=0.6) 
-
-# #total larvae in tanks
-# levelProportions<-c(1,1,1,1,1,1,1,1) #width of box
-# boxplot(total.live.larvae~Treatment*Day,data=larval.counts,col=c("blue","red"), xaxt = "n", width=levelProportions, frame.plot=TRUE, ylab=expression(paste("Number of Live Larvae")))
-# axis(1, at=c(1.5, 3.5, 5.5, 7.5), labels=c("Day0", "Day2", "Day4", "Day6"))
-# legend("bottomleft", c("Ambient","High"), fill=c("blue","red"), bty="n", cex=0.6) 
-# 
-# # Add data points
-# mylevels<-levels(larval.counts$Combo)
-# for(i in 1:length(mylevels))
-# {
-#   thislevel<-mylevels[i]
-#   thisvalues<-larval.counts[larval.counts$Combo==thislevel, "total.live.larvae"]
-#   
-#   # take the x-axis indices and add a jitter, proportional to the N in each level
-#   myjitter<-jitter(rep(i, length(thisvalues)), amount=levelProportions[i]/10)
-#   points(myjitter, thisvalues, pch=20, col=rgb(0,0,0,.2))   
-# }
+# Add data points
+levelProportions <- c(1,1,1,1,1,1,1,1)
+mylevels<-levels(larval.counts$Combo)
+for(i in 1:length(mylevels))
+{
+  thislevel<-mylevels[i]
+  thisvalues<-larval.counts[larval.counts$Combo==thislevel, "total.live.larvae"]
+  
+  # take the x-axis indices and add a jitter, proportional to the N in each level
+  myjitter<-jitter(rep(i, length(thisvalues)), amount=levelProportions[i]/10)
+  points(myjitter, thisvalues, pch=20, col=rgb(0,0,0,.2))   
+}
 # 
 # #percent mortality in visual checks
 # boxplot(per.mort~Treatment*Day,data=larval.counts,col=c("blue","red"), xaxt = "n", width=levelProportions, frame.plot=TRUE, ylab=expression(paste("% Mortality in Visual Checks")))
@@ -255,10 +243,11 @@ dev.off()
 #   points(myjitter, thisvalues, pch=20, col=rgb(0,0,0,.2))   
 # }
 # 
-# dev.off()
+title("Treatment Conditions Trial 3", outer=TRUE)
+dev.off()
 
 #Load WiSH data
-wish.data <- read.csv("Wish_data.csv", header=TRUE, sep=",", na.strings="NA") #load data with a header, separated by commas, with NA as NA
+wish.data <- read.csv("Wish_data_Trial3.csv", header=TRUE, sep=",", na.strings="NA") #load data with a header, separated by commas, with NA as NA
 date.time <- sub("-",",", wish.data$Date...Time)
 date.time <- strsplit(date.time, ",")
 date.time <- data.frame(matrix(unlist(date.time), nrow=length(date.time), byrow=T),stringsAsFactors=FALSE)
@@ -266,11 +255,24 @@ temp.data <- wish.data[,grepl("Tank", colnames(wish.data))] #search for and subs
 temp.data <- cbind(date.time, temp.data)
 colnames(temp.data) <- c("Date", "Time", "Tank3", "Tank6", "Tank4", "Tank1", "Tank5", "Tank2")
 
-##Need to plot temp data
-plot(temp.data$Tank1,type="l", col="pink", ylab=expression(paste("Temperature °C")), xlab=expression(paste("Time")))
+sal.data <- wish.data[,grepl("Salinity", colnames(wish.data))] #search for and subset columns containing the header name "Tank"
+sal.data <- sal.data[,grepl("Temperature", colnames(sal.data))] #search for and subset columns containing the header name "Tank"
+sal.data <- cbind(date.time, sal.data)
+colnames(sal.data) <- c("Date", "Time", "Salinity1", "Salinity2", "Salinity3", "Salinity4")
+
+##Plot temp data
+plot(temp.data$Tank1,type="l", col="pink", ylab=expression(paste("Temperature °C")), xlab=expression(paste("Time")), ylim=c(13,14.5))
 lines(temp.data$Tank2, col="lightblue" )
 lines(temp.data$Tank3, col="blue")
 lines(temp.data$Tank4, col="red")
 lines(temp.data$Tank5, col="darkred")
 lines(temp.data$Tank6, col="darkblue")
-legend("topleft", c("Tank1","Tank2", "Tank3","Tank4","Tank5", "Tank6" ), col=c("pink","lightblue", "blue", "red", "darkred", "darkblue"), bty="n", lwd=1, cex=0.6) 
+legend("bottomleft", c("Tank1","Tank2", "Tank3","Tank4","Tank5", "Tank6" ), col=c("pink","lightblue", "blue", "red", "darkred", "darkblue"), bty="n", lwd=1, cex=0.6) 
+
+##Plot salinity data
+plot(sal.data$Salinity1,type="l", col="pink", ylab=expression(paste("Temperature °C")), xlab=expression(paste("Time")), ylim=c(20,30))
+lines(sal.data$Salinity2, col="lightblue" )
+lines(sal.data$Salinity3, col="blue")
+lines(sal.data$Salinity4, col="red")
+legend("bottomleft", c("Salinity1", "Salinity2", "Salinity3", "Salinity4"), col=c("pink","lightblue", "blue", "red"), bty="n", lwd=1, cex=0.6) 
+

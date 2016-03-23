@@ -130,7 +130,7 @@ seed.size$Avg.Len <- rowMeans(seed.size[,c("Length1",  "Length2")], na.rm = TRUE
 seed.size$Avg.Wid <- rowMeans(seed.size[,c("Width1",  "Width2")], na.rm = TRUE) #calculate average of counts
 seed.size$Avg.Area <- rowMeans(seed.size[,c("Area1",  "Area2")], na.rm = TRUE) #calculate average of counts
 avg.len <- aggregate(Avg.Len ~ Day + Treatment, data=seed.size, mean)
-avg.len <- aggregate(Avg.Len ~ Day + Treatment, data=seed.size, mean)
+avg.area <- aggregate(Avg.Area ~ Day + Treatment, data=seed.size, mean)
 
 
 
@@ -201,7 +201,7 @@ plotCI(x=c(1:3), y=gmean_cells,uiw=gse_cells, liw=gse_cells,add=TRUE,gap=0.001, 
 levelProportions<-c(1,1,1) #width of box
 boxplot(Avg.Area~Treatment,data=seed.size,col=c("blue", "pink", "red"), xaxt = "n", width=levelProportions, frame.plot=TRUE, ylab=expression(paste("Seed Shell Area mm"^"2")))
 axis(1, at=c(2), labels=c("Day1"))
-legend("topleft", c("Ambient", "Medium", "High"), fill=c("blue", "pink", "red"), bty="n", cex=0.6) 
+legend("topleft", c("pH 7.89", "pH 7.38", "pH 7.04"), fill=c("blue", "pink", "red"), bty="n", cex=0.6) 
 
 # Add data points
 mylevels<-levels(seed.size$Treatment)
@@ -235,15 +235,16 @@ title("Treatment Conditions Juvenile Experiment", outer=TRUE)
 dev.off()
 
 #Load WiSH data
-wish.data <- read.csv("Wish_data.csv", header=TRUE, sep=",", na.strings="NA") #load data with a header, separated by commas, with NA as NA
+wish.data <- read.csv("Wish_data_Seed.csv", header=TRUE, sep=",", na.strings="NA") #load data with a header, separated by commas, with NA as NA
 date.time <- sub("-",",", wish.data$Date...Time)
 date.time <- strsplit(date.time, ",")
 date.time <- data.frame(matrix(unlist(date.time), nrow=length(date.time), byrow=T),stringsAsFactors=FALSE)
 temp.data <- wish.data[,grepl("Tank", colnames(wish.data))] #search for and subset columns containing the header name "Tank"
 temp.data <- cbind(date.time, temp.data)
 colnames(temp.data) <- c("Date", "Time", "Tank3", "Tank6", "Tank4", "Tank1", "Tank5", "Tank2")
-pH.data <-cbind(date.time, wish.data$pH.Exp.Treat...Custom.Value, wish.data$ph.Exp.Control...Custom.Value)
-colnames(pH.data) <- c("Date", "Time", "High", "Ambient")
+pH.data <-cbind(date.time, wish.data$pH.Exp.Treat...Custom.Value, wish.data$ph.Exp.Control...Custom.Value, wish.data$Header.2...c...Custom.Value, wish.data$Header.1...tr...Custom.Value)
+colnames(pH.data) <- c("Date", "Time", "TpH7.38", "TpH7.04", "HpH7.04","HpH7.38")
+
   
 ##plot temp data
 plot(temp.data$Tank1,type="l", col="pink", ylab=expression(paste("Temperature °C")), xlab=expression(paste("Time")), ylim=c(10, 20))
@@ -255,7 +256,11 @@ lines(temp.data$Tank6, col="darkblue")
 legend("topleft", c("Tank1","Tank2", "Tank3","Tank4","Tank5", "Tank6" ), col=c("pink","lightblue", "blue", "red", "darkred", "darkblue"), bty="n", lwd=1, cex=0.6) 
 
 #plot pH Data
-plot(pH.data$High,type="l", col="pink", ylab=expression(paste("pH")), xlab=expression(paste("Time")), ylim=c(7.0, 8.2))
-lines(pH.data$Ambient, col="lightblue" )
+plot(pH.data$TpH7.38,type="l", col="lightblue", ylab=expression(paste("pH")), xlab=expression(paste("Time")), ylim=c(6.8, 8.0))
+lines(pH.data$TpH7.04, col="pink" )
+lines(pH.data$HpH7.38, col="blue" )
+lines(pH.data$HpH7.04, col="red" )
+legend("topleft", c("Tank Low","Tank Super Low", "Header Low","Header Super Low"), col=c("lightblue","pink", "blue", "red"), bty="n", lwd=1, cex=0.6) 
+
 
 
