@@ -211,8 +211,15 @@ plotCI(x=c(1,2), y=gmean_cells,uiw=gse_cells, liw=gse_cells,add=TRUE,gap=0.001, 
 
 #total larvae in tanks
 boxplot(total.live.larvae~Treatment*Day,data=larval.counts,col=c("red","pink"), xaxt = "n", varwidth=T, frame.plot=TRUE, ylab=expression(paste("Number of Live Larvae")))
-axis(1, at=c(1.5, 3.5), labels=c("Day2", "Day4"))
+#axis(1, at=c(1.5, 3.5, 5.5), labels=c("Day2", "Day4", "Day5"))
+#legend("topright", c("pH 7.01","pH 7.38"), fill=c("red","pink"), bty="n", cex=0.6) 
+#axis.break(2,450000,style="slash") 
+
+gap.boxplot(larval.counts$total.live.larvae ~ larval.counts$Treatment * larval.counts$Day, #means the values are plotted againsy variable
+            gap=list(top=c(100000,480000),bottom=c(NA,NA)), ylab=expression(paste("Number of Live Larvae")),col=c("red","pink")) #specifies regions of Y axis to exclude
 legend("topright", c("pH 7.01","pH 7.38"), fill=c("red","pink"), bty="n", cex=0.6) 
+
+
 
 # Add data points
 levelProportions <- c(1,1,1,1,1,1,1,1)
