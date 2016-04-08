@@ -127,9 +127,19 @@ gse_cells <- tapply(cell.counts$cells.ml, cell.counts$Treatment, std.error, na.r
 ##### Seed Size #####
 
 seed.size <- read.csv("Seed_Size.csv", header=TRUE, sep=",", na.strings="NA") #load data with a header, separated by commas, with NA as NA
+Day.10.size <-subset(seed.size, Day=="Day10")
 avg.area <- aggregate(Area ~ Day*Treatment, data=seed.size, mean)
+se.area <- aggregate(Area ~ Day*Treatment, data=seed.size, std.error)
+Shell.size <- cbind(avg.area, se.area$Area)
+Day.10 <-subset(Shell.size, Day=="Day10")
+colnames(Day.10) <- c("Day", "Treatment", "avg.area", "se.area")
 
+plot(c(1,3), c(20,30), type="n", xaxt = "n", ylab=expression(paste("Shell Area mm2")), xlab=expression(paste("Treatment")))
+axis(1, at=1:3, labels=c("pH 7.89", "pH 7.38", "pH 7.04"))
+plotCI(x=c(1:3), y=Day.10$avg.area,uiw=Day.10$se.area, liw=Day.10$se.area,add=TRUE,gap=0.001, pch=20, col=c("blue", "pink", "red"))
 
+m <- lm(Area ~ Treatment, data=Day.10.size)
+anova(m)
 
 ##### Plot Tank and Treatment mean ± se #####
 pdf("/Users/hputnam/MyProjects/Geoduck_Epi/project-geoduck-oa/RAnalysis/Output/running_carbonate_chemistry_tanks_Seed.pdf")
