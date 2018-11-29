@@ -1,6 +1,7 @@
 # Standard Protocol Procedure for Using the Mettler T5 Titrator (Roberts Lab)
 
-Last Revised: 20180627 HMP
+
+
 
 Contents
 - [**Precautions**](#Precautions)
