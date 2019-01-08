@@ -9,7 +9,7 @@ and Nyssa Silbiger (07/18/2016).
 - pH Buffer 4.0 (Fisher SB101-4)
 - pH Buffer 7.0 (Fisher SB107-4)
 - pH buffer 10.0 (Fisher SB115-4)
-- 0.1M Hydrochloric acid from Dickson Lab ()
+- 0.1M Hydrochloric acid titrant from Dickson Lab
 - CO2 Reference Materials from Dickson Lab (CRMs)
 
 #### Personal Protective Equipment (PPE):
@@ -29,7 +29,6 @@ and Nyssa Silbiger (07/18/2016).
 - Rotameter (Omega FL-2010-SS; 0.04-0.5LPM)
 - LabX 2017 (v8.0.0) software with Auto Export module
      license
-- USB Drive
 
 ## 1. DAILY STARTUP PROCEDURES
 
@@ -48,13 +47,15 @@ lead time for receiving new orders of HCl.
 
 #### Start LabX Software, Titrator, and Rondolino
 
-1. Login in to the srlab account on the computer next to the titrator and open LabX.
+1. Login in to the srlab account on the computer next to the titrator. Turn on the verizon smarthub for internet access. Open LabX and Github Desktop.
 
-2. Turn the titrator on (button on front of cube).
+2. In Github Desktop, select fetch origin in the top right in case any changes were made to the repo previously.
 
-3. Turn the Rondolino on (switch on rear, lower right). It will perform a brief system check, where the probes will raise, and the carousel will rotate, before returning the probes and carousel to their original positions.
+3. Turn the titrator on (button on front of cube).
 
-4. If a sample cup is not already present, press the left blue button on top of the Rondolino (rotates carousel 180˚) and place an empty cup for HCL at position 0. Rotate the carousel back to position 0.
+4. Turn the Rondolino on (switch on rear, lower right). It will perform a brief system check, where the probes will raise, and the carousel will rotate, before returning the probes and carousel to their original positions.
+
+5. If a sample cup is not already present, press the left blue button on top of the Rondolino (rotates carousel 180˚) and place an empty cup for HCL at position 0. Rotate the carousel back to position 0.
 
 _Tip: if no rotation occurs, check the wire
 connections at the back of the Rondolino._
@@ -82,7 +83,7 @@ connections at the back of the Rondolino._
 2. Check the date of the pH buffers in the conical tubes. Discard the buffers and replace them if they are more than 3 days old. Place each buffer in cups and place the cups in positions 1 (pH 7.0), 2 (pH 4.0), and 3 (pH 10.0) of the sample changer.
     - _The order of the buffers is critical!_
     
-3. CAREFULLY open the small gray cap on the pH probe, add KCl if needed; the liquid inside the pH probe should be within or above the frosted glass portion.
+3. Carefully open the small gray cap on the pH probe, add KCl if needed; the liquid inside the pH probe should be within or above the frosted glass portion.
 
 4. Insert the probe behind the Temperature Sensor and either across from, or in front of the acid line. Open the gray cap on the side of pH probe. The stirrer stirs clockwise, so in order to get accurate readings, the acid line should not be directly behind the pH probe.
 
@@ -94,13 +95,13 @@ connections at the back of the Rondolino._
 
 8. When the calibration is completed, on the LABX mainscreen, open the DATA and click on Result Sets from the Last 24 hours.
      
-9. Double click the pH calibration results and select the Raw Data tab. Select Print Data Tab then Export To and choose PDF. 
+9. Double click the pH calibration results and select the Raw Data tab. Select Print Data Tab then Export To; choose PDF. 
 
-10. Plug in a USB drive and save the data in folder labelled with the data “YEARMONTHDAY/” as “pHcal”.
+10. Save the data in a new folder, “~Github/P_generosa/Water_Chemistry/Data/Titrator/YYYYMMDD/”, as “pHcal”.
 
-11. In the results details section you will have the values for the slope and zero point, record the second value on the logging sheet.
+11. In the results details section you will have the values for the slope and zero point, record the second value on the [logging sheet](https://github.com/shellytrigg/P_generosa/blob/master/Water_Chemistry/data/Titrator/pHCalibration.csv).
 
-12. In the measured values section you will have the results for each pH buffer. Record the E value for each pH on the logging sheet.
+12. In the measured values section you will have the results for each pH buffer. Record the E value for each pH on the same logging sheet.
 
 13. Record the measured temperature of the buffers during the calibration.
 
@@ -115,56 +116,65 @@ connections at the back of the Rondolino._
 *__CAUTION:__*: CRMs are poisoned with mercury (II) chloride (<1%) and should be
 handled with care!
 
-1. The DI water from pH calibration should be in position 0. Place the ‘Junk Seawater’ sample in position 1, and ‘CRM 1’ and ‘CRM 2’ in positions 2 and 3 respectively. 
+4. The DI water from pH calibration should be in position 0. Place the ‘Junk Seawater’ sample in position 1, and ‘CRM 1’ and ‘CRM 2’ in positions 2 and 3 respectively. 
 
-2. Click on analysis then method on the LabX main page. Right click on “007” and click start. 
+5. Click on analysis then method on the LabX main page. Right click on “007” and click start. 
 
-3. Change the number of samples to 3. Name the samples “JUNK”, “CRM 1”, and “CRM 2” in order. Enter the mass of each sample. Click start to begin titrating.
+6. Change the number of samples to 3. Name the samples “JUNK”, “CRM 1”, and “CRM 2” in order. Enter the mass of each sample. Click start to begin titrating.
 
-4. Once the titration of all samples is completed, the output file will be saved onto the desktop as “YEARMONTHDAY_CRM.csv”. Copy this file into the “YEARMONTHDAY/” folder created on your flash drive for the pH calibration.
+7. Once the titration of all samples is completed, the output file will be saved onto the desktop as "MM_DD_YYYY". Copy this file into “~Github/P_generosa//Water_Chemistry/Data/Titrator/YYYYMMDD/” and rename the file "/YYYYMMDD_CRM.csv".
 
-5. Dispose of the CRM samples in the toxic waste container. Rinse with DI water and discard into the toxic waste container to ensure no mercuric acid goes down the drain. 
+8. Click on Data, then Results sets to the left. Select Last 24 hours, and double click on the "007" run that was just completed. Select Print Data Tab, Export to, PDF. Choose today's folder and save the file as "CRM" to save the masses of the samples. 
 
-6. Discard the seawater sample down the drain and rinse the cup.
+9. Dispose of the CRM samples in the toxic waste container. Rinse with DI water and discard into the toxic waste container again to ensure no mercuric acid goes down the drain. 
+
+10. Discard the seawater sample down the drain and rinse the cup.
 
 #### Check the Titrator's Error Rate
 
-1. Put your flash drive into a computer with a cloned Seawater-Chemistry-Analysis repo.
+1. Create a file for the sample masses called “/YYYYMMDDmass_CRM.csv" with the columns “sample”, “mass”, “salinity”, “Sample.ID”, “Type” and “Notes” and add it to today’s folder. ([Look at this file as an example.](https://github.com/shellytrigg/P_generosa/blob/master/Water_Chemistry/data/Titrator/20181030/20181030mass_CRM.csv))  
 
-2. Create a file for masses called “YEARMONTHDAYmass_CRM with the columns “sample”, “mass”, “salinity”, “Sample.ID”, “Type” and “Notes” and add it to today’s folder. 
-
-3. Enter in the measurements for each sample. Salinity values can be found by looking up the CRM batch number created by the Dickson Lab. Assume 29.000 ppm for the “JUNK” sample.
+2. Enter in the measurements for each sample. Salinity values can be found by looking up the CRM batch number created by the Dickson Lab. Assume 29.0 ppm for the “JUNK” sample.
 
 o   _The sample ID column must match what you entered into the computer for the titration._
 
-4. Open the R script “Apex_Water_Chem_MONTH-DAY_YEAR…/”. Change line 27 to today’s date and confirm your mass and titration output file names in lines 30-32.
+3. Record the CRM batch number, info and other notes in [CRM_Batch_Info.csv](https://github.com/shellytrigg/P_generosa/blob/master/Water_Chemistry/data/Titrator/CRM_Batch_Info.csv).
 
-5. Run the script through line 138. An output file called “TA_Output_YEARMONTHDAY_CRM.csv” will be created in today’s folder.
+4. Open the R script [TotalAlkCalc_wParsing.R](https://github.com/shellytrigg/P_generosa/blob/master/Water_Chemistry/analysis/titrator/TotalAlkCalc_wParsing.R). Change line 27 to today’s date and check that your input files in lines 30-32 are set for the /YYYYMMDD_CRM.csv and /YYYYMMDD_massCRM.csv files. If a new bottle of titrant is used, change lines 108-116.
 
-6. Open the output file and enter the Batch number and alkalinity value of the batch in a new line. Make two rows for the “CRM 1 Error” and “CRM 2 Error”. 
+5. Run the script through line 138. An output file called “TA_Output_YYYYMMDD_CRM.csv” will be created in today’s folder.
 
-7. Calculate error. Error = (Batch alkalinity – CRM # TA)/Batch alkalinity*100. An error of 1% or less is acceptable. If the error is above 1%, the pH calibration and/or the CRM measurements must be redone.
+o   _If you get an error, be sure that the working directory was correctly set. Sometimes it must be typed out manually._
+o   _Try running the code line by line if the script still produces an error and the output file has NA values._
+
+6. Open the “TA_Output_YYYYMMDD_CRM.csv” and enter the Batch number and alkalinity value of the batch in a new line. Make two rows for the “CRM 1 Error” and “CRM 2 Error”. 
+
+7. Calculate error. Error = (CRM Alkalinity - Batch alkalinity)/Batch alkalinity*100. An error of 1% or less is acceptable. If the error is above 1%, the pH calibration and/or the CRM measurements must be redone.
 
 *__IMPORTANT__*: If CRM is running low, please submit a purchase request for
 more, as there is significant lead time for receiving new orders.
 
 ## 3. Running Water Samples
 
-1. Prepare another JUNK sample with 59-61 g seawater in the “Junk Seawater cup” and place it in position 0. Add 59-61 g of water sample to clean, dry sample cups and place in sequential positions. Up to 8 samples can be run at once. Record all masses.
+1. Prepare another JUNK sample with 59-61 g seawater in the “Junk Seawater cup” and place it in position 0. Add 59-61 g of water sample to clean, dry sample cups and place in sequential positions. Up to 8 water samples can be run at once since one spot must be dedicated to a JUNK sample. Run 2 samples per tank for a technical replicate. Record the mass of all measured samples.
 
-o  If you are taking discrete measurements, makes sure your water sample was collected at the same time the discrete measurements were taken.
+o  _Ensure your water sample was collected at the same time the discrete measurements were taken!_
 
-2. Click on analysis then method on the LabX main page. Right click on “007” and click start. 
+2. Click on analysis, then method on the LabX main page. Right click on “007” and click start. 
 
-3. Enter the number of samples being run and enter sample IDs and masses. Click start to begin titrating. 
+3. Enter the number of samples being run and enter sample IDs (e.g., 1A, 1B, 2A, 2B...) and masses. Click start to begin titrating. 
 
-4. Once the titration of all samples is completed, the output file will be saved onto the desktop as “YEARMONTHDAY_CRM.csv”. Copy this file into today’s folder to obtain your alkalinity data.
+4. Once the titration of all samples is completed, the output file will be saved onto the desktop as “MM_DD_YYYY.csv”. Copy this file into today’s folder and rename it "YYYYMMDD_run#.csv" to obtain your alkalinity data.
 
-5. Discard samples, rinse cups and invert on a drying rack for later use. 
+5. Create a mass file, "YYYYMMDD_massrun#.csv" for the run as done before for CRMs in 'Check the Titrator's Error Rate' Step 1. 
+
+6. Run the same script that was run when checking the titrator's error rate, [TotalAlkCalc_wParsing.R](https://github.com/shellytrigg/P_generosa/blob/master/Water_Chemistry/analysis/titrator/TotalAlkCalc_wParsing.R), but change the file names from 'CRM' to 'run1' in lines 30-32. An output file should appear in today's folder.
+
+7. Discard samples, rinse cups and invert on a drying rack for later use. 
 
 *__CAUTION__*: If samples have been poisoned, they must be discarded in the toxic waste container!
 
-6. Place the HCL cup at position 0 to catch any drips from the titrator tube. Store the pH probe based on time until next titrator use.
+8. Place the HCL drip cup at position 0 to catch any drips from the titrator tube. Store the pH probe based on time until next titrator use.
 
 *_pH Probe Storage Procedures_*
 
@@ -172,4 +182,12 @@ o  If you are taking discrete measurements, makes sure your water sample was c
 - Medium-term (No longer than a month) - move to the pH probe holder on the titrator, close gray cap
 - Long-term (Longer than a month) - move to the pH probe holder on the titrator and place clear cap over the end containing KCl, close gray cap
 
-7. Shut down the computer, Rondolino, and titrator. 
+## 4. Update [Github P_generosa repo](https://github.com/shellytrigg/P_generosa)
+
+1. Ensure that all the files you added and changed were correctly tracked and added in Github Desktop.
+
+2. Commit the changes in the bottom left box.
+
+3. Push the changes by clicking the button on the top right.
+
+4. All finished! Shut down the computer, and turn off the Rondolino and titrator. 
