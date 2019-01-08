@@ -134,7 +134,7 @@ handled with care!
 
 1. Create a file for the sample masses called “/YYYYMMDDmass_CRM.csv" with the columns “sample”, “mass”, “salinity”, “Sample.ID”, “Type” and “Notes” and add it to today’s folder. ([Look at this file as an example.](https://github.com/shellytrigg/P_generosa/blob/master/Water_Chemistry/data/Titrator/20181030/20181030mass_CRM.csv))  
 
-2. Enter in the measurements for each sample. Salinity values can be found by looking up the CRM batch number created by the Dickson Lab. Assume 29.0 ppm for the “JUNK” sample.
+2. Enter in the measurements for each sample. Salinity values can be found by looking up the [CRM batch number created by the Dickson Lab](https://www.nodc.noaa.gov/ocads/oceans/Dickson_CRM/batches.html). Assume 29.0 ppm for the “JUNK” sample.
 
 o   _The sample ID column must match what you entered into the computer for the titration._
 
